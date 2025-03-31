@@ -334,7 +334,7 @@ const StoryBuilder = () => {
       {/* Top level controls */}
       <div className="flex justify-between items-center mb-4 border-b border-gray-700 pb-3 px-1">
         <div>
-          <h3 className="font-bold text-lg text-white">StoryBuilder</h3>
+          <h3 className="font-bold text-lg text-white">StoryBuilder AI</h3>
         </div>
         <div className="flex gap-2">
           <Button

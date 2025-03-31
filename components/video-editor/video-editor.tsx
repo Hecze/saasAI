@@ -30,7 +30,7 @@ export default function VideoEditor() {
 
           {/* Clip Library Section - Only visible on larger screens */}
           <div className="rounded-lg bg-gray-900/80 p-4 border border-gray-800 hidden lg:flex flex-col h-[300px]">
-            <h3 className="text-sm font-medium text-purple-400 mb-3">Biblioteca</h3>
+            <h3 className="text-sm font-medium text-purple-400 mb-3">Fotogramas</h3>
             <div className="grid grid-cols-2 gap-2 overflow-y-auto">
               <div className="aspect-video bg-gray-800 rounded-md overflow-hidden">
                 <Image
@@ -171,7 +171,7 @@ export default function VideoEditor() {
 
               {/* Export Button */}
               <Button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-0">
-              <Sparkle className="h-4 w-4 mr-2" />
+              <Sparkle className="h-4 w-4 " />
               Generar Video
               </Button>
             </div>

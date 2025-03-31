@@ -423,7 +423,7 @@ export default function Home() {
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
                 <span className="text-xl font-bold">2</span>
               </div>
-              <h3 className="mb-3 text-xl font-semibold text-white">Edita con StoryBuilder</h3>
+              <h3 className="mb-3 text-xl font-semibold text-white">Edita con StoryBuilder AI</h3>
               <p className="text-gray-300">
                 Modifica diálogos, descripciones de escenas y detalles visuales. Reordena cuadros con drag-and-drop y
                 personaliza cada aspecto de tu historia.
@@ -450,10 +450,10 @@ export default function Home() {
         <div className="container relative z-10 mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
             <div className="inline-block rounded-full bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
-              VISUALIZACIÓN
+              EDITA Y MEJORA
             </div>
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-indigo-200">
-              Interfaz de StoryBuilder
+              Pre-visualiza tu Historia
             </h2>
             <p className="mx-auto mt-4 mb-12 max-w-3xl text-center text-gray-300">
               Nuestra interfaz intuitiva te permite editar cada aspecto de tu storyboard antes de generar el video
@@ -477,7 +477,7 @@ export default function Home() {
               EDICIÓN AVANZADA
             </div>
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-indigo-200">
-              Editor de Video con IA
+              Generación de Video con IA
             </h2>
             <p className="mx-auto mt-4 mb-12 max-w-3xl text-center text-gray-300">
               Ajusta cada detalle de tu video con nuestro editor intuitivo potenciado por IA. Sincroniza audio, añade
