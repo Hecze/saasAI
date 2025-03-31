@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import { useState } from "react"
-import { Download, SkipBack, SkipForward, Plus, Play } from "lucide-react"
+import { Download, SkipBack, SkipForward, Plus, Play, Sparkle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import VideoEditorSidebar from "./video-editor-sidebar"
@@ -142,37 +142,40 @@ export default function VideoEditor() {
             </div>
           </div>
 
-          {/* Export Panel */}
-          <div className="rounded-lg bg-gray-900/80 p-4 border border-gray-800 h-[250px]">
-            <h3 className="text-sm font-medium text-purple-400 mb-3">Exportar</h3>
+            {/* Generar Video Panel */}
+            <div className="rounded-lg bg-gray-900/80 p-4 border border-gray-800 h-[250px]">
+            <h3 className="text-sm font-medium text-purple-400 mb-3">Generar</h3>
             <div className="space-y-3">
               {/* Format Dropdown */}
               <div>
-                <label className="text-xs text-gray-400 block mb-1">Formato</label>
-                <select className="w-full h-8 rounded-md bg-gray-800 border border-gray-700 text-sm text-white px-2">
-                  <option>MP4</option>
-                  <option>MOV</option>
-                  <option>WebM</option>
-                </select>
+              <label className="text-xs text-gray-400 block mb-1">Formato</label>
+              <select className="w-full h-8 rounded-md bg-gray-800 border border-gray-700 text-sm text-white px-2">
+                <option>MP4</option>
+                <option>MOV</option>
+                <option>WebM</option>
+              </select>
               </div>
 
               {/* Resolution Dropdown */}
               <div>
-                <label className="text-xs text-gray-400 block mb-1">Resolución</label>
-                <select className="w-full h-8 rounded-md bg-gray-800 border border-gray-700 text-sm text-white px-2">
-                  <option>1080p</option>
-                  <option>720p</option>
-                  <option>4K</option>
-                </select>
+              <label className="text-xs text-gray-400 block mb-1">Resolución</label>
+              <select className="w-full h-8 rounded-md bg-gray-800 border border-gray-700 text-sm text-white px-2">
+                <option>1080p</option>
+                <option>720p</option>
+                <option>4K</option>
+              </select>
               </div>
+              
+              {/* Spacer */}
+              <div className="" />
 
               {/* Export Button */}
-              <Button className="w-full mt-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-0">
-                <Download className="h-4 w-4 mr-2" />
-                Exportar Video
+              <Button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-0">
+              <Sparkle className="h-4 w-4 mr-2" />
+              Generar Video
               </Button>
             </div>
-          </div>
+            </div>
         </div>
       </div>
     </div>

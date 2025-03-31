@@ -21,6 +21,7 @@ import TypewriterEffect from "@/components/typewriter-effect"
 import SwitchSelector from "@/components/ui/switch-selector"
 import VideoEditor from "@/components/video-editor/video-editor"
 import StoryBuilder from "@/components/story-builder"
+import BenefitCard from "@/components/ui/benefit-card"
 import { useState, useRef, useEffect } from "react"
 
 export default function Home() {
@@ -153,9 +154,7 @@ export default function Home() {
   /**
    * Handles input change for the prompt input
    */
-  /**
-   * Handles input change for the prompt input
-   */
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setInputValue(e.target.value)
   }
@@ -506,9 +505,9 @@ export default function Home() {
             </h2>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 border border-purple-500/10 shadow-[0_0_15px_rgba(139,92,246,0.1)] backdrop-blur-sm">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-600/20 to-indigo-600/20 text-purple-400 backdrop-blur-sm">
+          <div className="grid gap-8 md:grid-cols-2">
+            <BenefitCard 
+              icon={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -523,16 +522,13 @@ export default function Home() {
                     d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605"
                   />
                 </svg>
-              </div>
-              <h3 className="mb-3 text-xl font-semibold text-white">Reducción de costos</h3>
-              <p className="text-gray-300">
-                Elimina la necesidad de contratar actores, animadores y equipo de producción. Reduce drásticamente los
-                costos de producción audiovisual.
-              </p>
-            </div>
+              }
+              title="Reducción de costos"
+              description="Elimina la necesidad de contratar actores, animadores y equipo de producción. Reduce drásticamente los costos de producción audiovisual."
+            />
 
-            <div className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 border border-purple-500/10 shadow-[0_0_15px_rgba(139,92,246,0.1)] backdrop-blur-sm">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-600/20 to-indigo-600/20 text-purple-400 backdrop-blur-sm">
+            <BenefitCard 
+              icon={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -547,16 +543,13 @@ export default function Home() {
                     d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
                   />
                 </svg>
-              </div>
-              <h3 className="mb-3 text-xl font-semibold text-white">Control creativo total</h3>
-              <p className="text-gray-300">
-                Sistema "human-in-the-loop" que te permite intervenir en cada fase del proceso, evitando
-                interpretaciones erróneas de la IA y manteniendo tu visión creativa.
-              </p>
-            </div>
+              }
+              title="Control creativo total"
+              description='Sistema "human-in-the-loop" que te permite intervenir en cada fase del proceso, evitando interpretaciones erróneas de la IA y manteniendo tu visión creativa.'
+            />
 
-            <div className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 border border-purple-500/10 shadow-[0_0_15px_rgba(139,92,246,0.1)] backdrop-blur-sm">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-600/20 to-indigo-600/20 text-purple-400 backdrop-blur-sm">
+            <BenefitCard 
+              icon={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -571,16 +564,13 @@ export default function Home() {
                     d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"
                   />
                 </svg>
-              </div>
-              <h3 className="mb-3 text-xl font-semibold text-white">Velocidad de producción</h3>
-              <p className="text-gray-300">
-                Reduce el tiempo de producción de semanas a horas. Genera videos de alta calidad en una fracción del
-                tiempo que tomaría con métodos tradicionales.
-              </p>
-            </div>
+              }
+              title="Velocidad de producción"
+              description="Reduce el tiempo de producción de semanas a horas. Genera videos de alta calidad en una fracción del tiempo que tomaría con métodos tradicionales."
+            />
 
-            <div className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 border border-purple-500/10 shadow-[0_0_15px_rgba(139,92,246,0.1)] backdrop-blur-sm">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-600/20 to-indigo-600/20 text-purple-400 backdrop-blur-sm">
+            <BenefitCard 
+              icon={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -595,335 +585,16 @@ export default function Home() {
                     d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-              </div>
-              <h3 className="mb-3 text-xl font-semibold text-white">Sin conocimientos técnicos</h3>
-              <p className="text-gray-300">
-                Interfaz intuitiva diseñada para usuarios sin experiencia en animación o producción de video. Crea
-                contenido profesional sin curva de aprendizaje.
-              </p>
-            </div>
+              }
+              title="Sin conocimientos técnicos"
+              description="Interfaz intuitiva diseñada para usuarios sin experiencia en animación o producción de video. Crea contenido profesional sin curva de aprendizaje."
+            />
           </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="pricing" ref={pricingRef} className="relative py-20 text-white">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
-        <div className="container relative z-10 mx-auto px-4 max-w-6xl">
-          <div className="text-center mb-12">
-            <div className="inline-block rounded-full bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
-              PLANES
-            </div>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-indigo-200">
-              Planes de Suscripción
-            </h2>
-            <p className="mx-auto mt-4 max-w-3xl text-center text-gray-300">
-              Sistema flexible de créditos que te permite pagar solo por lo que necesitas. Cada acción consume una
-              cantidad específica de créditos.
-            </p>
-          </div>
-
-          <div className="grid gap-8 md:grid-cols-3">
-            <div className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 border border-purple-500/10 shadow-[0_0_15px_rgba(139,92,246,0.1)] backdrop-blur-sm">
-              <div className="mb-4 text-center">
-                <h3 className="text-xl font-semibold text-white">Básico</h3>
-                <div className="mt-4 flex items-baseline justify-center">
-                  <span className="text-5xl font-extrabold tracking-tight text-white">$29</span>
-                  <span className="ml-1 text-xl font-normal text-gray-400">/mes</span>
-                </div>
-                <p className="mt-2 text-sm text-gray-400">50 créditos mensuales</p>
-              </div>
-              <ul className="mt-6 space-y-4">
-                <li className="flex items-start">
-                  <svg
-                    className="h-6 w-6 flex-shrink-0 text-green-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  <span className="ml-3 text-gray-300">Subir storyboard: 1 crédito</span>
-                </li>
-                <li className="flex items-start">
-                  <svg
-                    className="h-6 w-6 flex-shrink-0 text-green-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  <span className="ml-3 text-gray-300">Modificar storyboard: 1 crédito</span>
-                </li>
-                <li className="flex items-start">
-                  <svg
-                    className="h-6 w-6 flex-shrink-0 text-green-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  <span className="ml-3 text-gray-300">Generar video: 7 créditos</span>
-                </li>
-                <li className="flex items-start">
-                  <svg
-                    className="h-6 w-6 flex-shrink-0 text-green-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  <span className="ml-3 text-gray-300">Efectos de sonido: 1 crédito</span>
-                </li>
-              </ul>
-              <div className="mt-8">
-                <Button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-0">
-                  Comenzar Ahora
-                </Button>
-              </div>
-            </div>
-
-            <div className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 border border-purple-500/30 shadow-[0_0_25px_rgba(139,92,246,0.2)] backdrop-blur-sm relative">
-              <div className="absolute -top-4 left-0 right-0 mx-auto w-fit px-4 py-1 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-full text-white text-sm font-medium">
-                Más Popular
-              </div>
-              <div className="mb-4 text-center">
-                <h3 className="text-xl font-semibold text-white">Profesional</h3>
-                <div className="mt-4 flex items-baseline justify-center">
-                  <span className="text-5xl font-extrabold tracking-tight text-white">$59</span>
-                  <span className="ml-1 text-xl font-normal text-gray-400">/mes</span>
-                </div>
-                <p className="mt-2 text-sm text-gray-400">150 créditos mensuales</p>
-              </div>
-              <ul className="mt-6 space-y-4">
-                <li className="flex items-start">
-                  <svg
-                    className="h-6 w-6 flex-shrink-0 text-green-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  <span className="ml-3 text-gray-300">Todo lo del plan Básico</span>
-                </li>
-                <li className="flex items-start">
-                  <svg
-                    className="h-6 w-6 flex-shrink-0 text-green-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  <span className="ml-3 text-gray-300">Generar diálogos: 2 créditos</span>
-                </li>
-                <li className="flex items-start">
-                  <svg
-                    className="h-6 w-6 flex-shrink-0 text-green-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  <span className="ml-3 text-gray-300">Estilos visuales avanzados</span>
-                </li>
-                <li className="flex items-start">
-                  <svg
-                    className="h-6 w-6 flex-shrink-0 text-green-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  <span className="ml-3 text-gray-300">Resolución hasta 1080p</span>
-                </li>
-              </ul>
-              <div className="mt-8">
-                <Button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-0 shadow-[0_0_15px_rgba(139,92,246,0.3)]">
-                  Comenzar Ahora
-                </Button>
-              </div>
-            </div>
-
-            <div className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 border border-purple-500/10 shadow-[0_0_15px_rgba(139,92,246,0.1)] backdrop-blur-sm">
-              <div className="mb-4 text-center">
-                <h3 className="text-xl font-semibold text-white">Empresarial</h3>
-                <div className="mt-4 flex items-baseline justify-center">
-                  <span className="text-5xl font-extrabold tracking-tight text-white">$99</span>
-                  <span className="ml-1 text-xl font-normal text-gray-400">/mes</span>
-                </div>
-                <p className="mt-2 text-sm text-gray-400">500 créditos mensuales</p>
-              </div>
-              <ul className="mt-6 space-y-4">
-                <li className="flex items-start">
-                  <svg
-                    className="h-6 w-6 flex-shrink-0 text-green-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  <span className="ml-3 text-gray-300">Todo lo del plan Profesional</span>
-                </li>
-                <li className="flex items-start">
-                  <svg
-                    className="h-6 w-6 flex-shrink-0 text-green-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  <span className="ml-3 text-gray-300">Resolución hasta 4K</span>
-                </li>
-                <li className="flex items-start">
-                  <svg
-                    className="h-6 w-6 flex-shrink-0 text-green-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  <span className="ml-3 text-gray-300">Voces premium personalizables</span>
-                </li>
-                <li className="flex items-start">
-                  <svg
-                    className="h-6 w-6 flex-shrink-0 text-green-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  <span className="ml-3 text-gray-300">Soporte prioritario</span>
-                </li>
-              </ul>
-              <div className="mt-8">
-                <Button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-0">
-                  Comenzar Ahora
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="relative py-20 text-white">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
-        <div className="container relative z-10 mx-auto px-4 max-w-6xl">
-          <div className="text-center mb-12">
-            <div className="inline-block rounded-full bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
-              TESTIMONIOS
-            </div>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-indigo-200">
-              Lo que Dicen Nuestros Usuarios
-            </h2>
-          </div>
-
-          <div className="relative overflow-hidden">
-            <div
-              className={`grid gap-8 md:grid-cols-2 transition-transform duration-300 ease-in-out ${
-                isSliding ? (slideDirection === "right" ? "-translate-x-full" : "translate-x-full") : "translate-x-0"
-              }`}
-            >
-              {testimonials.slice(currentTestimonial, currentTestimonial + 2).map((testimonial, index) => (
-                <div
-                  key={index}
-                  className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 border border-purple-500/10 shadow-[0_0_15px_rgba(139,92,246,0.1)] backdrop-blur-sm"
-                >
-                  <div className="mb-4 flex items-center gap-4">
-                    <div className="h-12 w-12 overflow-hidden rounded-full bg-gradient-to-br from-purple-600/20 to-indigo-600/20 backdrop-blur-sm">
-                      <Image
-                        src="/placeholder.svg?height=48&width=48"
-                        alt={testimonial.name}
-                        width={48}
-                        height={48}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-white">{testimonial.name}</h3>
-                      <p className="text-sm text-gray-400">{testimonial.position}</p>
-                    </div>
-                  </div>
-                  <p className="italic text-gray-300">"{testimonial.text}"</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Pagination controls outside the testimonials */}
-          <div className="flex justify-center items-center mt-8 gap-4">
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full bg-gray-800/60 border-purple-500/20 hover:bg-gray-700/60"
-              onClick={() => changeTestimonial("left")}
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-
-            <div className="flex gap-2">
-              {Array.from({ length: Math.ceil(testimonials.length / 2) }).map((_, i) => (
-                <span
-                  key={i}
-                  className={`h-2 w-2 rounded-full ${
-                    currentTestimonial / 2 === i ? "bg-purple-500" : "bg-gray-600"
-                  }`}
-                  onClick={() => setCurrentTestimonial(i * 2)}
-                  style={{ cursor: "pointer" }}
-                ></span>
-              ))}
-            </div>
-
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full bg-gray-800/60 border-purple-500/20 hover:bg-gray-700/60"
-              onClick={() => changeTestimonial("right")}
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Final CTA Section */}
-      <section className="relative py-16 text-white">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a12] via-purple-900/20 to-[#0a0a12] z-0"></div>
-        <div className="container relative z-10 mx-auto px-4 text-center max-w-5xl">
-          <div className="inline-block rounded-full bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
-            COMIENZA HOY
-          </div>
-          <h2 className="mb-6 text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-indigo-200">
-            Transforma tus Ideas en Videos Animados
-          </h2>
-          <p className="mx-auto mb-8 max-w-2xl text-gray-300">
-            Descubre cómo nuestra plataforma puede revolucionar tu forma de crear contenido audiovisual. Prueba gratis y
-            crea tu primer video hoy mismo.
-          </p>
-          <Button
-            size="lg"
-            className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-0 shadow-[0_0_15px_rgba(139,92,246,0.3)]"
-            onClick={handleSubmit}
-          >
-            Prueba Gratis Ahora
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
         </div>
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" className="relative py-20 text-white">
+      <section id="faq" className="relative pb-20 text-white">
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
         <div className="container relative z-10 mx-auto px-4 max-w-5xl">
           <div className="text-center mb-12">
