@@ -165,23 +165,23 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative w-full pt-28 text-white">
-        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 via-indigo-900/10 to-[#0a0a12] z-0"></div>
+        <div className="absolute inset-0 md:bg-gradient-to-b from-purple-900/20 via-indigo-900/10 to-[#0a0a12] z-0"></div>
         <div className="absolute inset-0 z-0">
           <div className="h-full w-full">
             {/* Grid pattern */}
             <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
 
             {/* Glowing orbs */}
-            <div className="absolute top-1/4 left-1/4 h-32 w-32 rounded-full bg-purple-600/20 blur-3xl"></div>
-            <div className="absolute top-1/3 right-1/3 h-64 w-64 rounded-full bg-indigo-600/20 blur-3xl"></div>
+            <div className="absolute top-1/4 left-1/4 h-32 w-32 rounded-full md:bg-purple-600/20 blur-3xl"></div>
+            <div className="absolute top-1/3 right-1/3 h-64 w-64 rounded-full md:bg-indigo-600/20 blur-3xl"></div>
           </div>
         </div>
 
         <div className="container relative z-10 mx-auto px-4 text-center max-w-5xl">
-          <div className="inline-block rounded-full bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-6">
+          <div className="inline-block rounded-full bg-indigo-600/20 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-6">
             TRANSFORMA TUS IDEAS CON IA
           </div>
-          <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-indigo-200">
+          <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-purple-200 to-indigo-200">
             De Storyboard a Video con IA Generativa
           </h1>
           <h2 className="mx-auto mb-10 max-w-3xl text-xl text-gray-300 md:text-2xl">
@@ -242,7 +242,7 @@ export default function Home() {
                   <Button
                     type="submit"
                     size="icon"
-                    className="h-12 w-12 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-0 shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+                    className="h-12 w-12 md:bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-0 shadow-[0_0_15px_rgba(139,92,246,0.3)]"
                   >
                     <ArrowRight className="h-5 w-5" />
                   </Button>
@@ -286,7 +286,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
         <div className="container relative z-10 mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
-            <div className="inline-block rounded-full bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
+            <div className="inline-block rounded-full bg-indigo-600/20 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
               PROCESO SIMPLE
             </div>
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-indigo-200">
@@ -446,13 +446,13 @@ export default function Home() {
 
       {/* Visual Demo Section */}
       <section ref={demoRef} id="features" className="relative py-20 text-white">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
+        <div className="absolute inset-0 md:bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
         <div className="container relative z-10 mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
-            <div className="inline-block rounded-full bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
+            <div className="inline-block rounded-full bg-indigo-600/20 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
               EDITA Y MEJORA
             </div>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-indigo-200">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-purple-200 to-indigo-200">
               Pre-visualiza tu Historia
             </h2>
             <p className="mx-auto mt-4 mb-12 max-w-3xl text-center text-gray-300">
@@ -473,10 +473,10 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
         <div className="container relative z-10 mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
-            <div className="inline-block rounded-full bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
+            <div className="inline-block rounded-full bg-indigo-600/20 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
               EDICIÓN AVANZADA
             </div>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-indigo-200">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-purple-200 to-indigo-200">
               Generación de Video con IA
             </h2>
             <p className="mx-auto mt-4 mb-12 max-w-3xl text-center text-gray-300">
@@ -497,10 +497,10 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
         <div className="container relative z-10 mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
-            <div className="inline-block rounded-full bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
+            <div className="inline-block rounded-full bg-indigo-600/20 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
               VENTAJAS
             </div>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-indigo-200">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-purple-200 to-indigo-200">
               Beneficios Clave de Nuestra Plataforma
             </h2>
           </div>
@@ -595,13 +595,13 @@ export default function Home() {
 
       {/* FAQ Section */}
       <section id="faq" className="relative pb-20 text-white">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
+        <div className="absolute inset-0  md:bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
         <div className="container relative z-10 mx-auto px-4 max-w-5xl">
           <div className="text-center mb-12">
-            <div className="inline-block rounded-full bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
+            <div className="inline-block rounded-full bg-indigo-600/20 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
               PREGUNTAS
             </div>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-indigo-200">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-purple-200 to-indigo-200">
               Preguntas Frecuentes
             </h2>
           </div>

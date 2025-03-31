@@ -99,10 +99,10 @@ export default function PricingPage() {
 
   return (
     <section id="pricing" ref={pricingRef} className="relative min-h-screen pt-24 xl:pt-0 flex items-center text-white">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
+      <div className="absolute inset-0 md:bg-gradient-to-b md:from-[#0a0a12] md:via-[#0f0f1a] md:to-[#0a0a12] z-0"></div>
       <div className="container relative z-10 mx-auto px-4 max-w-6xl">
         <div className="text-center mb-12">
-          <div className="inline-block rounded-full bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
+          <div className="inline-block rounded-full md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
             PLANES
           </div>
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-indigo-200">

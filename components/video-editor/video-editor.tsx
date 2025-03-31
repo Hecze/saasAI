@@ -170,7 +170,7 @@ export default function VideoEditor() {
               <div className="" />
 
               {/* Export Button */}
-              <Button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-0">
+              <Button className="w-full bg-purple-600 md:bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-0">
               <Sparkle className="h-4 w-4 " />
               Generar Video
               </Button>

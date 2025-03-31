@@ -42,8 +42,8 @@ export default function VideoTimeline() {
             <div className="w-20 text-xs text-gray-400">Video</div>
             <div className="flex-1 h-10 bg-gray-800 rounded-md relative">
               {/* Video Segments */}
-              <div className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-purple-600/80 to-indigo-600/80 rounded-md"></div>
-              <div className="absolute inset-y-0 left-[66%] w-1/3 bg-gradient-to-r from-violet-600/80 to-fuchsia-600/80 rounded-md"></div>
+              <div className="absolute inset-y-0 left-0 w-1/3 bg-purple-600/80 md:bg-gradient-to-r from-purple-600/80 to-indigo-600/80 rounded-md"></div>
+              <div className="absolute inset-y-0 left-[66%] w-1/3 bg-purple-600/80 md:bg-gradient-to-r from-violet-600/80 to-fuchsia-600/80 rounded-md"></div>
 
 
             </div>
@@ -53,7 +53,7 @@ export default function VideoTimeline() {
             <div className="w-20 text-xs text-gray-400">Video</div>
             <div className="flex-1 h-10 bg-gray-800 rounded-md relative">
               {/* Video Segments */}
-              <div className="absolute inset-y-0 left-[33%] w-1/3 bg-gradient-to-r from-indigo-600/80 to-violet-600/80 rounded-md"></div>
+              <div className="absolute inset-y-0 left-[33%] w-1/3 bg-purple-600/80 md:bg-gradient-to-r from-indigo-600/80 to-violet-600/80 rounded-md"></div>
 
 
             </div>

@@ -333,7 +333,7 @@ const StoryBuilder = () => {
   
   
   return (
-    <div className="overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-2 md:p-6 border border-purple-500/20 shadow-[0_0_25px_rgba(139,92,246,0.15)]">
+    <div className="overflow-hidden rounded-xl bg-gray-800 md:bg-gradient-to-br from-gray-900 to-gray-800 p-2 md:p-6 border border-purple-500/20 shadow-[0_0_25px_rgba(139,92,246,0.15)]">
       {/* Top level controls */}
       <div className="flex justify-between items-center mb-4 border-b border-gray-700 pb-3 px-1">
         <div>
@@ -396,7 +396,7 @@ const StoryBuilder = () => {
           
           <Button
             variant="outline"
-            className="w-full mt-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-700 hover:to-indigo-700 border-0"
+            className="w-full mt-4 bg-purple-600 md:bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-700 hover:to-indigo-700 border-0"
             onClick={handleAddScene}
           >
             <Plus className="mr-2 h-4 w-4" />
