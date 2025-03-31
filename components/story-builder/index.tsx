@@ -333,7 +333,7 @@ const StoryBuilder = () => {
   
   
   return (
-    <div className="overflow-hidden rounded-xl bg-gray-800 md:bg-gradient-to-br from-gray-900 to-gray-800 p-2 md:p-6 border border-purple-500/20 shadow-[0_0_25px_rgba(139,92,246,0.15)]">
+    <div className="overflow-hidden rounded-xl bg-gray-800 md:bg-gradient-to-br from-gray-900 to-gray-800 p-2 md:p-6 border border-purple-500/20 md:shadow-[0_0_25px_rgba(139,92,246,0.15)]">
       {/* Top level controls */}
       <div className="flex justify-between items-center mb-4 border-b border-gray-700 pb-3 px-1">
         <div>

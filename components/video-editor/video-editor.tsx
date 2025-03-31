@@ -19,7 +19,7 @@ export default function VideoEditor() {
   const [duration, setDuration] = useState("3")
 
   return (
-    <div className="overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 border border-purple-500/20 shadow-[0_0_25px_rgba(139,92,246,0.15)]">
+    <div className="overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 border border-purple-500/20 md:shadow-[0_0_25px_rgba(139,92,246,0.15)]">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left sidebar - Tools */}
         <div className="lg:col-span-3 flex flex-col h-full gap-4">

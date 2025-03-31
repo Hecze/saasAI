@@ -178,7 +178,7 @@ export default function Home() {
         </div>
 
         <div className="container relative z-10 mx-auto px-4 text-center max-w-5xl">
-          <div className="inline-block rounded-full bg-indigo-600/20 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-6">
+          <div className="inline-block rounded-full bg-indigo-950 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-6">
             TRANSFORMA TUS IDEAS CON IA
           </div>
           <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-purple-200 to-indigo-200">
@@ -205,56 +205,54 @@ export default function Home() {
             <div className="mt-8">
               {/* Container with fixed height and transition */}
               <div
-              className="transition-height duration-200 ease-in-out overflow-hidden"
+              className="md:transition-height md:duration-200 md:ease-in-out overflow-hidden"
               style={{ height: inputAreaHeight }}
               >
-              {isPromptMode ? (
+                {isPromptMode ? (
                 <form
                 ref={promptInputRef}
                 onSubmit={handleSubmit}
-                className="rounded-xl bg-gray-900/60 p-2 backdrop-blur-sm border border-purple-500/20 shadow-[0_0_15px_rgba(139,92,246,0.15)]"
+                className="rounded-xl bg-gray-900/60 p-2 backdrop-blur-sm border border-purple-500/20 md:shadow-[0_0_15px_rgba(139,92,246,0.15)]"
                 >
                 <div className="flex flex-col sm:flex-row">
                   <div className="flex-1 relative">
                   <Input
-                    className="h-12 flex-1 border-0 bg-transparent text-white placeholder:text-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0"
-                    value={inputValue}
-                    onChange={handleInputChange}
-                    onFocus={() => setInputFocused(true)}
-                    onBlur={() => setInputFocused(false)}
+                  className="h-12 flex-1 border-0 bg-transparent text-white placeholder:text-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  value={inputValue}
+                  onChange={handleInputChange}
+                  onFocus={() => setInputFocused(true)}
+                  onBlur={() => setInputFocused(false)}
                   />
                   <div className="absolute inset-0 flex items-center px-3 pointer-events-none">
-                    <TypewriterEffect isVisible={!inputFocused && !inputValue} />
+                  <TypewriterEffect isVisible={!inputFocused && !inputValue} />
                   </div>
                   </div>
                   <div className="flex mt-2 sm:mt-0 gap-2">
                   <Button
                     size="icon"
                     variant="ghost"
-                    className="h-12 w-12 relative group border-0 bg-transparent hover:bg-transparent"
+                    className="h-12 w-12 border-0 bg-transparent hover:bg-transparent peer"
                     type="button"
                   >
-                    <Sparkles className="text-gray-400 opacity-60 group-hover:opacity-100 group-hover:text-white transition-all duration-200" />
-                    <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    Enhance prompt
-                    </span>
+                    <Sparkles className="text-gray-400 hover:text-white hover:opacity-100 opacity-60 transition-all duration-200" />
                   </Button>
+
                   <Button
-                    type="submit"
-                    size="icon"
-                    className="h-12 w-12 md:bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-0 shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+                  type="submit"
+                  size="icon"
+                  className="h-12 w-12 md:bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-0 md:shadow-[0_0_15px_rgba(139,92,246,0.3)]"
                   >
-                    <ArrowRight className="h-5 w-5" />
+                  <ArrowRight className="h-5 w-5" />
                   </Button>
                   </div>
                 </div>
                 </form>
-              ) : (
+                ) : (
                 <div
                 ref={uploadAreaRef}
-                className={`rounded-xl bg-gray-900/60 p-10 md:py-24 backdrop-blur-sm border-2 border-dashed ${
+                className={`rounded-xl bg-gray-900/60 p-10 md:py-24 md:backdrop-blur-sm border-2 border-dashed ${
                   isDragging ? "border-purple-500 bg-gray-900/80" : "border-gray-600"
-                } transition-colors duration-200 shadow-[0_0_15px_rgba(139,92,246,0.15)] text-center`}
+                } transition-colors duration-200 md:shadow-[0_0_15px_rgba(139,92,246,0.15)] text-center`}
                 onDragOver={handleDragOver}
                 onDragLeave={() => setIsDragging(false)}
                 onDrop={handleDrop}
@@ -272,7 +270,7 @@ export default function Home() {
                   <p className="text-xs text-gray-500 mt-2">Formatos soportados: JPG, PNG, PDF</p>
                 </div>
                 </div>
-              )}
+                )}
               </div>
             </div>
             </div>
@@ -286,10 +284,10 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
         <div className="container relative z-10 mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
-            <div className="inline-block rounded-full bg-indigo-600/20 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
+            <div className="inline-block rounded-full bg-indigo-950 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
               PROCESO SIMPLE
             </div>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-indigo-200">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-purple-200 to-indigo-200">
               Así Funciona Nuestra Plataforma
             </h2>
           </div>
@@ -299,7 +297,7 @@ export default function Home() {
             <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-24">
               {/* Step 1: Hand-drawn Storyboard */}
                 <div className="flex flex-col items-center lg:self-end">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-purple-600 md:bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
                 <span className="text-xl font-bold">1</span>
                 </div>
                 <div className="relative w-80 aspect-video rounded-xl overflow-hidden border-2 border-purple-500/30">
@@ -324,12 +322,12 @@ export default function Home() {
 
                 {/* Step 2: AI-Enhanced Storyboard */}
                 <div className="flex flex-col items-center lg:self-start lg:-mt-12">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-purple-600 md:bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
                 <span className="text-xl font-bold">2</span>
                 </div>
                 <div className="relative">
                 {/* Main image (in front) */}
-                <div className="relative z-20 w-72 rounded-xl overflow-hidden border-2 border-purple-500/50 shadow-[0_0_25px_rgba(139,92,246,0.3)]">
+                <div className="relative z-20 w-72 rounded-xl overflow-hidden border-2 border-purple-500/50 md:shadow-[0_0_25px_rgba(139,92,246,0.3)]">
                 <Image
                 src="/images/storyboardIA_2.png"
                 alt="Storyboard IA mejorado"
@@ -376,7 +374,7 @@ export default function Home() {
 
               {/* Step 3: Final Video */}
               <div className="flex flex-col items-center lg:self-end">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-purple-600 md:bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
                   <span className="text-xl font-bold">3</span>
                 </div>
                 <div
@@ -408,8 +406,8 @@ export default function Home() {
             </div>
           </div>
           <div className="grid gap-12 md:grid-cols-3 mt-24 md:mt-8">
-            <div className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 border border-purple-500/10 shadow-[0_0_15px_rgba(139,92,246,0.1)] backdrop-blur-sm">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
+            <div className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 border border-purple-500/10 md:shadow-[0_0_15px_rgba(139,92,246,0.1)] backdrop-blur-sm">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-purple-600 md:bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
                 <span className="text-xl font-bold">1</span>
               </div>
               <h3 className="mb-3 text-xl font-semibold text-white">Crea tu Storyboard</h3>
@@ -419,8 +417,8 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 border border-purple-500/10 shadow-[0_0_15px_rgba(139,92,246,0.1)] backdrop-blur-sm">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
+            <div className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 border border-purple-500/10 md:shadow-[0_0_15px_rgba(139,92,246,0.1)] backdrop-blur-sm">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-purple-600 md:bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
                 <span className="text-xl font-bold">2</span>
               </div>
               <h3 className="mb-3 text-xl font-semibold text-white">Edita con StoryBuilder AI</h3>
@@ -430,8 +428,8 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 border border-purple-500/10 shadow-[0_0_15px_rgba(139,92,246,0.1)] backdrop-blur-sm">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
+            <div className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 border border-purple-500/10 md:shadow-[0_0_15px_rgba(139,92,246,0.1)] backdrop-blur-sm">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-purple-600 md:bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
                 <span className="text-xl font-bold">3</span>
               </div>
               <h3 className="mb-3 text-xl font-semibold text-white">Genera tu Video</h3>
@@ -449,7 +447,7 @@ export default function Home() {
         <div className="absolute inset-0 md:bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
         <div className="container relative z-10 mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
-            <div className="inline-block rounded-full bg-indigo-600/20 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
+            <div className="inline-block rounded-full bg-indigo-950 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
               EDITA Y MEJORA
             </div>
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-purple-200 to-indigo-200">
@@ -473,7 +471,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
         <div className="container relative z-10 mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
-            <div className="inline-block rounded-full bg-indigo-600/20 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
+            <div className="inline-block rounded-full bg-indigo-950 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
               EDICIÓN AVANZADA
             </div>
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-purple-200 to-indigo-200">
@@ -497,7 +495,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
         <div className="container relative z-10 mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
-            <div className="inline-block rounded-full bg-indigo-600/20 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
+            <div className="inline-block rounded-full bg-indigo-950 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
               VENTAJAS
             </div>
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-purple-200 to-indigo-200">
@@ -598,7 +596,7 @@ export default function Home() {
         <div className="absolute inset-0  md:bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
         <div className="container relative z-10 mx-auto px-4 max-w-5xl">
           <div className="text-center mb-12">
-            <div className="inline-block rounded-full bg-indigo-600/20 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
+            <div className="inline-block rounded-full bg-indigo-950 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
               PREGUNTAS
             </div>
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-purple-200 to-indigo-200">
