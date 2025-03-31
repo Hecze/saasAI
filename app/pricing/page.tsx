@@ -113,7 +113,7 @@ export default function PricingPage() {
           </p>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-3 lg:mt-20">
+        <div className="grid gap-12 lg:gap-8 md:grid-cols-3 lg:mt-20">
           <PricingCard {...basicPlan} />
           <PricingCard {...proPlan} isPopular={true} />
           <PricingCard {...enterprisePlan} />
