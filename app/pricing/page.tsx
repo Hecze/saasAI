@@ -98,7 +98,7 @@ export default function PricingPage() {
   };
 
   return (
-    <section id="pricing" ref={pricingRef} className="relative h-screen flex items-center text-white">
+    <section id="pricing" ref={pricingRef} className="relative min-h-screen pt-24 xl:pt-0 flex items-center text-white">
       <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
       <div className="container relative z-10 mx-auto px-4 max-w-6xl">
         <div className="text-center mb-12">
