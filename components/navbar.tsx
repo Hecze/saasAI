@@ -89,6 +89,13 @@ export default function Navbar() {
               Inicio
             </Link>
             <Link
+              href="/pricing"
+              className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Precios
+            </Link>
+            <Link
               href="#features"
               className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
               onClick={() => setIsMenuOpen(false)}
@@ -102,13 +109,7 @@ export default function Navbar() {
             >
               Cómo Funciona
             </Link>
-            <Link
-              href="#pricing"
-              className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Precios
-            </Link>
+
             <Link
               href="#faq"
               className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
