@@ -71,7 +71,7 @@ export default function VideoEditor() {
           {/* Video Preview Area */}
           <div className="rounded-lg bg-black/60 aspect-video relative overflow-hidden w-full max-w-2xl mx-auto">
             <Image
-              src="/images/storyboardIA_2.png"
+              src="/images/storyboardIA_3.png"
               alt="Video preview"
               width={640}
               height={360}
@@ -88,7 +88,7 @@ export default function VideoEditor() {
               <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full text-white hover:bg-white/10">
                 <SkipForward className="h-4 w-4" />
               </Button>
-              <div className="mx-2 text-xs text-white">00:05 / 00:15</div>
+              <div className="mx-2 text-xs text-white">00:10 / 00:15</div>
             </div>
           </div>
 

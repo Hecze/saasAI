@@ -60,7 +60,7 @@ export default function Navbar() {
           {/* CTA Button */}
           <div className="hidden md:block">
             <Button className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-0">
-              Comenzar Gratis
+              Get Started
             </Button>
           </div>
 
@@ -117,7 +117,7 @@ export default function Navbar() {
               FAQ
             </Link>
             <Button className="w-full mt-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-0">
-              Comenzar Gratis
+              Get Started
             </Button>
           </div>
         </div>

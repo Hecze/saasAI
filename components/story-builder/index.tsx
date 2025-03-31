@@ -10,6 +10,9 @@ import {
   Upload,
   Plus,
   X,
+  Copy,
+  Minus,
+
   GripVertical
 } from "lucide-react"
 import {
@@ -342,21 +345,21 @@ const StoryBuilder = () => {
             variant="outline"
             className="h-8 px-3 bg-gray-800 border-gray-700 hover:bg-gray-700"
           >
-            <Play className="h-4 w-4" />
+            <Minus className="h-4 w-4" />
           </Button>
           <Button
             size="sm"
             variant="outline"
             className="h-8 px-3 bg-gray-800 border-gray-700 hover:bg-gray-700"
           >
-            <Download className="h-4 w-4" /> 
+            <Copy className="h-4 w-4" /> 
           </Button>
           <Button
             size="sm"
             variant="outline"
             className="h-8 px-3 bg-gray-800 border-gray-700 hover:bg-gray-700"
           >
-            <Share2 className="h-4 w-4" />
+            <X className="h-4 w-4" />
           </Button>
         </div>
       </div>
