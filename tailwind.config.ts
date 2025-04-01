@@ -53,6 +53,26 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // App-specific colors
+        app: {
+          bg: "#0a0a12",
+          card: {
+            dark: "#0f0f1a",
+            border: "rgba(139,92,246,0.1)",
+            light: "rgba(139,92,246,0.3)",
+            lighter: "rgba(139,92,246,0.5)",
+          },
+          purple: {
+            light: "rgb(235, 216, 255)",
+            DEFAULT: "#8b5cf6",
+            dark: "#7c3aed",
+          },
+          indigo: {
+            light: "#c7d2fe", 
+            DEFAULT: "#6366f1",
+            dark: "#4f46e5",
+          },
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -72,6 +92,26 @@ const config = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      // Custom utility classes
+      backgroundImage: {
+        'hero-gradient': 'linear-gradient(180deg, rgba(88,28,135,0.2) 0%, rgba(79,70,229,0.1) 50%, #0a0a12 100%)',
+        'section-gradient': 'linear-gradient(180deg, #0a0a12 0%, #0f0f1a 50%, #0a0a12 100%)',
+        'card-gradient': 'linear-gradient(to bottom right, #111827, #1f2937)',
+        'primary-button': 'linear-gradient(to right, #7c3aed, #4f46e5)',
+        'primary-button-hover': 'linear-gradient(to right, #6d28d9, #4338ca)',
+      },
+      textColor: {
+        'gradient-text': 'transparent',
+      },
+      boxShadow: {
+        'glow-sm': '0 0 15px rgba(139,92,246,0.1)',
+        'glow': '0 0 15px rgba(139,92,246,0.15)',
+        'glow-md': '0 0 15px rgba(139,92,246,0.3)',
+        'glow-lg': '0 0 25px rgba(139,92,246,0.3)',
+      },
+      transitionProperty: {
+        'height': 'height',
       },
     },
   },

@@ -160,28 +160,28 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen w-screen bg-[#0a0a12]">
+    <div className="flex flex-col min-h-screen w-screen bg-app-bg">
 
 
       {/* Hero Section */}
       <section className="relative w-full pt-28 text-white">
-        <div className="absolute inset-0 md:bg-gradient-to-b from-purple-900/20 via-indigo-900/10 to-[#0a0a12] z-0"></div>
+        <div className="absolute inset-0 md:bg-hero-gradient z-0"></div>
         <div className="absolute inset-0 z-0">
           <div className="h-full w-full">
             {/* Grid pattern */}
             <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
 
             {/* Glowing orbs */}
-            <div className="absolute top-1/4 left-1/4 h-32 w-32 rounded-full md:bg-purple-600/20 blur-3xl"></div>
-            <div className="absolute top-1/3 right-1/3 h-64 w-64 rounded-full md:bg-indigo-600/20 blur-3xl"></div>
+            <div className="absolute top-1/4 left-1/4 h-32 w-32 rounded-full md:bg-app-purple/20 blur-3xl"></div>
+            <div className="absolute top-1/3 right-1/3 h-64 w-64 rounded-full md:bg-app-indigo/20 blur-3xl"></div>
           </div>
         </div>
 
         <div className="container relative z-10 mx-auto px-4 text-center max-w-5xl">
-          <div className="inline-block rounded-full bg-indigo-950 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-6">
+          <div className="inline-block rounded-full bg-indigo-950 md:bg-gradient-to-r from-app-purple/20 to-app-indigo/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-6">
             TRANSFORMA TUS IDEAS CON IA
           </div>
-          <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-purple-200 to-indigo-200">
+          <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-app-purple-light to-app-indigo-light">
             De Storyboard a Video con IA Generativa
           </h1>
           <h2 className="mx-auto mb-10 max-w-3xl text-xl text-gray-300 md:text-2xl">
@@ -212,7 +212,7 @@ export default function Home() {
                 <form
                 ref={promptInputRef}
                 onSubmit={handleSubmit}
-                className="rounded-xl bg-gray-900/60 p-2 backdrop-blur-sm border border-purple-500/20 md:shadow-[0_0_15px_rgba(139,92,246,0.15)]"
+                className="rounded-xl bg-gray-900/60 p-2 backdrop-blur-sm border border-app-purple/20 shadow-glow"
                 >
                 <div className="flex flex-col sm:flex-row">
                   <div className="flex-1 relative">
@@ -240,7 +240,7 @@ export default function Home() {
                   <Button
                   type="submit"
                   size="icon"
-                  className="h-12 w-12 md:bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-0 md:shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+                  className="h-12 w-12 bg-primary-button hover:bg-primary-button-hover text-white border-0 shadow-glow-md"
                   >
                   <ArrowRight className="h-5 w-5" />
                   </Button>
@@ -251,8 +251,8 @@ export default function Home() {
                 <div
                 ref={uploadAreaRef}
                 className={`rounded-xl bg-gray-900/60 p-10 md:py-24 md:backdrop-blur-sm border-2 border-dashed ${
-                  isDragging ? "border-purple-500 bg-gray-900/80" : "border-gray-600"
-                } transition-colors duration-200 md:shadow-[0_0_15px_rgba(139,92,246,0.15)] text-center`}
+                  isDragging ? "border-app-purple bg-gray-900/80" : "border-gray-600"
+                } transition-colors duration-200 shadow-glow text-center`}
                 onDragOver={handleDragOver}
                 onDragLeave={() => setIsDragging(false)}
                 onDrop={handleDrop}
@@ -281,13 +281,13 @@ export default function Home() {
 
       {/* How it Works Section */}
       <section id="how-it-works" className="relative py-20 text-white">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
+        <div className="absolute inset-0 bg-section-gradient z-0"></div>
         <div className="container relative z-10 mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
-            <div className="inline-block rounded-full bg-indigo-950 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
+            <div className="inline-block rounded-full bg-indigo-950 md:bg-gradient-to-r from-app-purple/20 to-app-indigo/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
               PROCESO SIMPLE
             </div>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-purple-200 to-indigo-200">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-app-purple-light to-app-indigo-light">
               Así Funciona Nuestra Plataforma
             </h2>
           </div>
@@ -297,10 +297,10 @@ export default function Home() {
             <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-24">
               {/* Step 1: Hand-drawn Storyboard */}
                 <div className="flex flex-col items-center lg:self-end">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-purple-600 md:bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-app-purple md:bg-gradient-to-br from-app-purple to-app-indigo text-white">
                 <span className="text-xl font-bold">1</span>
                 </div>
-                <div className="relative w-80 aspect-video rounded-xl overflow-hidden border-2 border-purple-500/30">
+                <div className="relative w-80 aspect-video rounded-xl overflow-hidden border-2 border-app-card-lighter/30">
                 {/* Using the new storyboard image */}
                 <Image
                 src="/images/storyboard_boceto.png"
@@ -317,17 +317,17 @@ export default function Home() {
 
                 {/* Arrow - Only visible on mobile */}
                 <div className="transform rotate-90 lg:hidden my-2">
-                <ArrowRight className="h-8 w-8 text-purple-500" />
+                <ArrowRight className="h-8 w-8 text-app-purple" />
                 </div>
 
                 {/* Step 2: AI-Enhanced Storyboard */}
                 <div className="flex flex-col items-center lg:self-start lg:-mt-12">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-purple-600 md:bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-app-purple md:bg-gradient-to-br from-app-purple to-app-indigo text-white">
                 <span className="text-xl font-bold">2</span>
                 </div>
                 <div className="relative">
                 {/* Main image (in front) */}
-                <div className="relative z-20 w-72 rounded-xl overflow-hidden border-2 border-purple-500/50 md:shadow-[0_0_25px_rgba(139,92,246,0.3)]">
+                <div className="relative z-20 w-72 rounded-xl overflow-hidden border-2 border-app-card-lighter/50 shadow-glow-lg">
                 <Image
                 src="/images/storyboardIA_2.png"
                 alt="Storyboard IA mejorado"
@@ -342,7 +342,7 @@ export default function Home() {
 
                 {/* Background images - reduced size in desktop view */}
                 {/* Left card */}
-                <div className="absolute lg:top-8 lg:-left-12 -top-16 left-1/2 transform -translate-x-1/2 lg:translate-x-0 lg:h-32 lg:w-32 w-48 h-48 z-10 rounded-xl overflow-hidden border border-purple-500/20 blur-[2px]">
+                <div className="absolute lg:top-8 lg:-left-12 -top-16 left-1/2 transform -translate-x-1/2 lg:translate-x-0 lg:h-32 lg:w-32 w-48 h-48 z-10 rounded-xl overflow-hidden border border-app-card-lighter/20 blur-[2px]">
                 <div className="absolute inset-0 bg-black/40 z-10"></div>
                 <Image
                 src="/images/storyboardIA_1.png"
@@ -354,7 +354,7 @@ export default function Home() {
                 </div>
 
                 {/* Right card */}
-                <div className="absolute top-16 lg:top-8 lg:-right-12 -top-16 right-1/2 transform translate-x-1/2 lg:translate-x-0 lg:h-32 lg:w-32 w-48 h-48 z-10 rounded-xl overflow-hidden border border-purple-500/20 blur-[2px]">
+                <div className="absolute top-16 lg:top-8 lg:-right-12 -top-16 right-1/2 transform translate-x-1/2 lg:translate-x-0 lg:h-32 lg:w-32 w-48 h-48 z-10 rounded-xl overflow-hidden border border-app-card-lighter/20 blur-[2px]">
                   <div className="absolute inset-0 bg-black/40 z-10"></div>
                   <Image
                     src="/images/storyboardIA_3.png"
@@ -369,16 +369,16 @@ export default function Home() {
 
               {/* Arrow - Only visible on mobile */}
               <div className="transform rotate-90 lg:hidden w-8 my-20 mb-4">
-                <ArrowRight className="h-8 w-8 text-purple-500" />
+                <ArrowRight className="h-8 w-8 text-app-purple" />
               </div>
 
               {/* Step 3: Final Video */}
               <div className="flex flex-col items-center lg:self-end">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-purple-600 md:bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-app-purple md:bg-gradient-to-br from-app-purple to-app-indigo text-white">
                   <span className="text-xl font-bold">3</span>
                 </div>
                 <div
-                  className="relative w-80 aspect-video rounded-xl overflow-hidden border-2 border-purple-500/30 cursor-pointer bg-black"
+                  className="relative w-80 aspect-video rounded-xl overflow-hidden border-2 border-app-card-lighter/30 cursor-pointer bg-black"
                   onMouseEnter={() => setIsVideoHovered(true)}
                   onMouseLeave={() => setIsVideoHovered(false)}
                 >
@@ -406,8 +406,8 @@ export default function Home() {
             </div>
           </div>
           <div className="grid gap-12 md:grid-cols-3 mt-24 md:mt-8">
-            <div className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 border border-purple-500/10 md:shadow-[0_0_15px_rgba(139,92,246,0.1)] backdrop-blur-sm">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-purple-600 md:bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
+            <div className="rounded-xl bg-card-gradient p-6 border border-app-card-border shadow-glow-sm backdrop-blur-sm">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-app-purple md:bg-gradient-to-br from-app-purple to-app-indigo text-white">
                 <span className="text-xl font-bold">1</span>
               </div>
               <h3 className="mb-3 text-xl font-semibold text-white">Sube tu Storyboard</h3>
@@ -416,8 +416,8 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 border border-purple-500/10 md:shadow-[0_0_15px_rgba(139,92,246,0.1)] backdrop-blur-sm">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-purple-600 md:bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
+            <div className="rounded-xl bg-card-gradient p-6 border border-app-card-border shadow-glow-sm backdrop-blur-sm">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-app-purple md:bg-gradient-to-br from-app-purple to-app-indigo text-white">
                 <span className="text-xl font-bold">2</span>
               </div>
               <h3 className="mb-3 text-xl font-semibold text-white">Edita con StoryBuilder AI</h3>
@@ -425,8 +425,8 @@ export default function Home() {
               la IA convierte tus bocetos en arte profesional según tu configuración. Luego, edita diálogos, ajusta escenas y reorganiza tomas con drag-and-drop. Controla cada detalle de tu historia antes de animar.                </p>
             </div>
 
-            <div className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 border border-purple-500/10 md:shadow-[0_0_15px_rgba(139,92,246,0.1)] backdrop-blur-sm">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-purple-600 md:bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
+            <div className="rounded-xl bg-card-gradient p-6 border border-app-card-border shadow-glow-sm backdrop-blur-sm">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-app-purple md:bg-gradient-to-br from-app-purple to-app-indigo text-white">
                 <span className="text-xl font-bold">3</span>
               </div>
               <h3 className="mb-3 text-xl font-semibold text-white">Genera tu Video</h3>
@@ -440,13 +440,13 @@ export default function Home() {
 
       {/* Visual Demo Section */}
       <section ref={demoRef} id="features" className="relative py-20 text-white">
-        <div className="absolute inset-0 md:bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
+        <div className="absolute inset-0 md:bg-section-gradient z-0"></div>
         <div className="container relative z-10 mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
-            <div className="inline-block rounded-full bg-indigo-950 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
+            <div className="inline-block rounded-full bg-indigo-950 md:bg-gradient-to-r from-app-purple/20 to-app-indigo/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
               EDITA Y MEJORA
             </div>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-purple-200 to-indigo-200">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-app-purple-light to-app-indigo-light">
               Pre-visualiza tu Historia
             </h2>
             <p className="mx-auto mt-4 mb-12 max-w-3xl text-center text-gray-300">
@@ -464,13 +464,13 @@ export default function Home() {
 
       {/* Video Editor Interface Section */}
       <section className="relative py-20 text-white">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
+        <div className="absolute inset-0 bg-section-gradient z-0"></div>
         <div className="container relative z-10 mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
-            <div className="inline-block rounded-full bg-indigo-950 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
+            <div className="inline-block rounded-full bg-indigo-950 md:bg-gradient-to-r from-app-purple/20 to-app-indigo/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
               EDICIÓN AVANZADA
             </div>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-purple-200 to-indigo-200">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-app-purple-light to-app-indigo-light">
               Generación de Video con IA
             </h2>
             <p className="mx-auto mt-4 mb-12 max-w-3xl text-center text-gray-300">
@@ -488,13 +488,13 @@ export default function Home() {
 
       {/* Benefits Section */}
       <section className="relative py-20 text-white">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
+        <div className="absolute inset-0 bg-section-gradient z-0"></div>
         <div className="container relative z-10 mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
-            <div className="inline-block rounded-full bg-indigo-950 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
+            <div className="inline-block rounded-full bg-indigo-950 md:bg-gradient-to-r from-app-purple/20 to-app-indigo/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
               VENTAJAS
             </div>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-purple-200 to-indigo-200">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-app-purple-light to-app-indigo-light">
               Beneficios Clave de Nuestra Plataforma
             </h2>
           </div>
@@ -534,7 +534,7 @@ export default function Home() {
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
+                    d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
                   />
                 </svg>
               }
@@ -589,13 +589,13 @@ export default function Home() {
 
       {/* FAQ Section */}
       <section id="faq" className="relative pb-20 text-white">
-        <div className="absolute inset-0  md:bg-gradient-to-b from-[#0a0a12] via-[#0f0f1a] to-[#0a0a12] z-0"></div>
+        <div className="absolute inset-0 md:bg-section-gradient z-0"></div>
         <div className="container relative z-10 mx-auto px-4 max-w-5xl">
           <div className="text-center mb-12">
-            <div className="inline-block rounded-full bg-indigo-950 md:bg-gradient-to-r from-purple-600/20 to-indigo-600/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
+            <div className="inline-block rounded-full bg-indigo-950 md:bg-gradient-to-r from-app-purple/20 to-app-indigo/20 px-4 py-1 text-sm font-medium text-purple-300 backdrop-blur-md mb-4">
               PREGUNTAS
             </div>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-purple-200 to-indigo-200">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl bg-clip-text text-transparent bg-white md:bg-gradient-to-r from-white via-app-purple-light to-app-indigo-light">
               Preguntas Frecuentes
             </h2>
           </div>
