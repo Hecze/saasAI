@@ -382,15 +382,15 @@ export default function Home() {
                   onMouseEnter={() => setIsVideoHovered(true)}
                   onMouseLeave={() => setIsVideoHovered(false)}
                 >
-                  <div className="flex items-center justify-center h-full">
+                    <div className="flex items-center justify-center h-full">
                     <Image
-                      src="/images/storyboardIA_1.png"
+                      src={isVideoHovered ? "/animation.gif" : "/pre_animation.png"}
                       alt="Video final"
                       width={400}
                       height={225}
                       className="object-contain max-h-full"
                     />
-                  </div>
+                    </div>
                   <div
                     className={`absolute inset-0 bg-black/50 flex items-center justify-center transition-opacity duration-300 ${
                       isVideoHovered ? "opacity-80" : "opacity-50"
