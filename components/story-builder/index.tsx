@@ -366,7 +366,7 @@ const StoryBuilder = () => {
       
       <div className="grid gap-8 md:grid-cols-3">
         {/* Scene list panel */}
-        <div className="rounded-lg bg-gray-900/80 mx-auto p-3 sm:p-4 text-white border border-purple-500/10 backdrop-blur-sm">
+        <div className="rounded-lg w-full bg-gray-900/80 mx-auto p-3 sm:p-4 text-white border border-purple-500/10 backdrop-blur-sm">
           <h3 className="mb-4 font-semibold text-purple-400">Escenas</h3>
           
           {mounted && (

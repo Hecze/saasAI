@@ -160,7 +160,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#0a0a12]">
+    <div className="flex flex-col min-h-screen w-screen bg-[#0a0a12]">
 
 
       {/* Hero Section */}
@@ -410,10 +410,9 @@ export default function Home() {
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-purple-600 md:bg-gradient-to-br from-purple-600 to-indigo-600 text-white">
                 <span className="text-xl font-bold">1</span>
               </div>
-              <h3 className="mb-3 text-xl font-semibold text-white">Crea tu Storyboard</h3>
+              <h3 className="mb-3 text-xl font-semibold text-white">Sube tu Storyboard</h3>
               <p className="text-gray-300">
-                Sube tus bocetos dibujados a mano o genera un storyboard a través de un prompt. Selecciona estilos
-                predefinidos y paletas de colores para tu proyecto.
+              Carga tus bocetos dibujados a mano o describe tu escena en texto. Define el estilo visual (animado, realista, cómic) y la paleta de colores que deseas.               
               </p>
             </div>
 
@@ -423,9 +422,7 @@ export default function Home() {
               </div>
               <h3 className="mb-3 text-xl font-semibold text-white">Edita con StoryBuilder AI</h3>
               <p className="text-gray-300">
-                Modifica diálogos, descripciones de escenas y detalles visuales. Reordena cuadros con drag-and-drop y
-                personaliza cada aspecto de tu historia.
-              </p>
+              la IA convierte tus bocetos en arte profesional según tu configuración. Luego, edita diálogos, ajusta escenas y reorganiza tomas con drag-and-drop. Controla cada detalle de tu historia antes de animar.                </p>
             </div>
 
             <div className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 border border-purple-500/10 md:shadow-[0_0_15px_rgba(139,92,246,0.1)] backdrop-blur-sm">
@@ -434,9 +431,8 @@ export default function Home() {
               </div>
               <h3 className="mb-3 text-xl font-semibold text-white">Genera tu Video</h3>
               <p className="text-gray-300">
-                Nuestra IA rellena los fotogramas intermedios, aplica los estilos visuales elegidos y renderiza el video
-                final. Añade audio, efectos de sonido y diálogos generados.
-              </p>
+                Convierte tu storyboard en un video animado con nuestro editor inteligente. Controla duración, transiciones y añade audio generado por IA.              
+                </p>
             </div>
           </div>
         </div>
