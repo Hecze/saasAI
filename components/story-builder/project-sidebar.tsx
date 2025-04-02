@@ -13,10 +13,19 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
-import { Plus, Folder } from "lucide-react"
-import { fetchProjects } from "@/lib/api"
+import { Plus, Folder, Shell } from "lucide-react"
+import { storyboardService } from "@/lib/storyboard-service"
 import type { Project } from "@/lib/api"
 import Link from "next/link"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 interface ProjectSidebarProps {
   pathname: string
@@ -34,6 +43,11 @@ export function ProjectSidebar({ pathname }: ProjectSidebarProps) {
   const [selectedProject, setSelectedProject] = useState<string | null>(projectId)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  
+  // New project modal state
+  const [newProjectModalOpen, setNewProjectModalOpen] = useState(false)
+  const [newProjectName, setNewProjectName] = useState("")
+  const [isCreating, setIsCreating] = useState(false)
 
   // Fetch projects when component mounts
   useEffect(() => {
@@ -42,7 +56,9 @@ export function ProjectSidebar({ pathname }: ProjectSidebarProps) {
       setError(null)
 
       try {
-        const projectsData = await fetchProjects()
+
+        // Then get the projects (which may now include demo data)
+        const projectsData = storyboardService.getProjects()
         setProjects(projectsData)
       } catch (err) {
         console.error("Error loading projects:", err)
@@ -66,8 +82,26 @@ export function ProjectSidebar({ pathname }: ProjectSidebarProps) {
     setSelectedProject(projectId)
 
     try {
-      // Navigate to the project page, which will handle fetching versions
-      router.push(`/storybuilder/projects/${projectId}`)
+      // Get versions for this project
+      const versions = storyboardService.getVersions(projectId)
+      
+      // If project has versions, navigate to the first one
+      // Otherwise, we need to create a default version
+      if (versions.length > 0) {
+        router.push(`/storybuilder/projects/${projectId}/version/${versions[0].id}`)
+      } else {
+        // Create default version
+        const newVersion = storyboardService.createVersion({
+          projectId: projectId,
+          name: "Version 1",
+          description: "Initial version",
+          thumbnail: "/placeholder.svg?height=150&width=200",
+          scenes: []
+        })
+        
+        // Navigate to the new version
+        router.push(`/storybuilder/projects/${projectId}/version/${newVersion.id}`)
+      }
     } catch (err) {
       console.error("Error navigating to project:", err)
       alert("Error al navegar al proyecto. Por favor, inténtalo de nuevo.")
@@ -75,19 +109,41 @@ export function ProjectSidebar({ pathname }: ProjectSidebarProps) {
   }
 
   const createNewProject = async () => {
+    if (!newProjectName.trim()) return;
+    
+    setIsCreating(true);
+    
     try {
-      // In a real app, this would create a new project in the database
-      const newProject = {
-        name: "Nuevo Proyecto",
-        description: "Descripción del nuevo proyecto",
+      // Create a new project with the user-provided name
+      const newProject = storyboardService.createProject({
+        name: newProjectName,
+        description: `Proyecto: ${newProjectName}`,
         thumbnail: "/placeholder.svg?height=150&width=200",
-      }
-
-      // Navigate to create project page or directly create and navigate
-      router.push(`/storybuilder/projects/nuevo-proyecto`)
+      })
+      
+      // Create initial version for this project
+      const initialVersion = storyboardService.createVersion({
+        projectId: newProject.id,
+        name: "Version 1",
+        description: "Initial version",
+        thumbnail: "/placeholder.svg?height=150&width=200",
+        scenes: []
+      })
+      
+      // Update local state
+      setProjects([newProject, ...projects])
+      
+      // Close modal and reset form
+      setNewProjectModalOpen(false)
+      setNewProjectName("")
+      
+      // Navigate to the new project with its initial version
+      router.push(`/storybuilder/projects/${newProject.id}/version/${initialVersion.id}`)
     } catch (err) {
       console.error("Error creating project:", err)
       alert("Error al crear el proyecto. Por favor, inténtalo de nuevo.")
+    } finally {
+      setIsCreating(false)
     }
   }
 
@@ -105,12 +161,16 @@ export function ProjectSidebar({ pathname }: ProjectSidebarProps) {
         {/* Projects Section */}
         <SidebarGroup>
           <div className="flex items-center justify-between px-4 py-2">
-            <SidebarGroupLabel>Proyectos</SidebarGroupLabel>
+            <div className="flex items-center space-x-2">
+            <Folder className="h-4 w-4 text-gray-400 " />
+            <SidebarGroupLabel className="text-md">Proyectos</SidebarGroupLabel>
+            </div>
+
             <Button
               variant="ghost"
               size="icon"
               className="h-6 w-6 text-gray-400 hover:text-white hover:bg-gray-800"
-              onClick={createNewProject}
+              onClick={() => setNewProjectModalOpen(true)}
             >
               <Plus className="h-4 w-4" />
             </Button>
@@ -134,9 +194,9 @@ export function ProjectSidebar({ pathname }: ProjectSidebarProps) {
                           selectedProject === project.id
                             ? "bg-purple-900/30 border-purple-500 text-white"
                             : "bg-gray-800/50 border-gray-700 text-gray-200 hover:bg-gray-800 hover:border-gray-600"
-                        } transition-colors`}
+                        } transition-colors space-x-2`}
                       >
-                        <Folder className="mr-2 h-4 w-4 flex-shrink-0" />
+                        <Shell className="mr-2 h-2 w-2 flex-shrink-0 " />
                         <span className="truncate">{project.name}</span>
                       </button>
                     </div>
@@ -147,6 +207,49 @@ export function ProjectSidebar({ pathname }: ProjectSidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      
+      {/* New Project Creation Modal */}
+      <Dialog open={newProjectModalOpen} onOpenChange={setNewProjectModalOpen}>
+        <DialogContent className="sm:max-w-md bg-gray-900 border-gray-800 text-white">
+          <DialogHeader>
+            <DialogTitle className="text-white">Crear nuevo proyecto</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="space-y-2">
+              <Label htmlFor="project-name" className="text-gray-300">Nombre del proyecto</Label>
+              <Input 
+                id="project-name"
+                value={newProjectName} 
+                onChange={(e) => setNewProjectName(e.target.value)}
+                placeholder="Mi Proyecto" 
+                maxLength={30}
+                className="bg-gray-800 border-gray-700 focus:border-purple-500 text-white"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setNewProjectModalOpen(false)
+                setNewProjectName("")
+              }}
+              className="border-gray-700 text-slate-700 hover:bg-slate-700 hover:text-gray-200 hover:border-gray-600"
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={createNewProject}
+              disabled={!newProjectName.trim() || isCreating}
+              className={`${!newProjectName.trim() || isCreating ? 
+                'bg-purple-700/50 cursor-not-allowed' : 
+                'bg-purple-600 hover:bg-purple-700'}`}
+            >
+              {isCreating ? "Creando..." : "Crear"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Sidebar>
   )
 }

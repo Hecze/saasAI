@@ -1,12 +1,13 @@
 "use client"
 
-import { useState, useEffect, use } from "react"
+import { useState, useEffect, use, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { FileText, Save, Clock, Plus, Download, Share2, Play, Video } from "lucide-react"
 import StoryBuilder from "@/components/story-builder/story-builder"
 import { storyboardService } from "@/lib/storyboard-service"
 import type { Version } from "@/lib/api"
+import { DropdownSelector } from "@/components/story-builder/dropdown-selector"
 import {
   Tooltip,
   TooltipContent,
@@ -37,7 +38,6 @@ function TopNavigationBar({
   versionId, 
   projectId,
   isSaving,
-  saveMessage,
   showVersionsDropdown,
   setShowVersionsDropdown,
   openNewVersionModal,
@@ -62,7 +62,7 @@ function TopNavigationBar({
       <div className="flex items-center justify-between px-4 py-2">
         <div className="flex items-center space-x-4">
           <div>
-            <h1 className="font-medium text-white">{project.name}</h1>
+            <h1 className="font-medium text-white">{project?.name || 'Proyecto sin nombre'}</h1>
             <div className="flex items-center text-xs text-gray-400 space-x-2">
               <span className="flex items-center">
                 <FileText className="h-3 w-3 mr-1" />
@@ -70,7 +70,7 @@ function TopNavigationBar({
               </span>
               <span className="flex items-center">
                 <Clock className="h-3 w-3 mr-1" />
-                Última edición: {new Date(version.updatedAt).toLocaleDateString()}
+                Última edición: {version ? new Date(version.updatedAt).toLocaleDateString() : 'N/A'}
               </span>
             </div>
           </div>
@@ -87,46 +87,21 @@ function TopNavigationBar({
               className="flex items-center space-x-2 text-gray-300 text-sm py-1 px-3 rounded-md border border-gray-700 hover:bg-gray-800"
             >
               <Clock className="h-4 w-4" />
-              <span>Versión: {version.name}</span>
+              <span>Versión: {version?.name || 'N/A'}</span>
             </button>
 
-            {showVersionsDropdown && (
-              <div className="absolute right-0 mt-1 w-60 bg-gray-900 border border-gray-700 rounded-md shadow-lg z-50">
-                <div className="p-2">
-                  <div className="text-xs text-gray-400 mb-2 font-medium">Seleccionar Versión</div>
-                  <div className="max-h-48 overflow-y-auto">
-                    {versions.map((v) => (
-                      <button
-                        key={v.id}
-                        onClick={() => {
-                          router.push(`/storybuilder/projects/${projectId}/version/${v.id}`)
-                          setShowVersionsDropdown(false)
-                        }}
-                        className={`w-full text-left px-2 py-1.5 text-sm rounded ${
-                          v.id === versionId ? "bg-purple-900/30 text-purple-300" : "text-gray-300 hover:bg-gray-800"
-                        }`}
-                      >
-                        {v.name}
-                      </button>
-                    ))}
-                  </div>
-
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setShowVersionsDropdown(false)
-                      openNewVersionModal()
-                    }}
-                    className="w-full mt-2 flex items-center text-purple-400 hover:text-purple-300 text-sm px-2 py-1.5 rounded hover:bg-gray-800"
-                  >
-                    <Plus className="h-4 w-4 mr-1" /> Crear nueva versión
-                  </button>
-                </div>
-              </div>
-            )}
+            {/* Use the reusable dropdown component */}
+            <DropdownSelector
+              title="Seleccionar Versión"
+              options={versions.map(v => ({ id: v.id, name: v.name }))}
+              selectedId={versionId}
+              onSelect={(id) => router.push(`/storybuilder/projects/${projectId}/version/${id}`)}
+              onCreateNew={openNewVersionModal}
+              createNewText="Crear nueva versión"
+              open={showVersionsDropdown}
+              onClose={() => setShowVersionsDropdown(false)}
+            />
           </div>
-
-          {saveMessage && <span className="text-green-400 text-sm mr-2">{saveMessage}</span>}
           
           {/* Action buttons */}
           <TooltipProvider delayDuration={0}>
@@ -238,6 +213,9 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
   // New state for the modal
   const [newVersionModalOpen, setNewVersionModalOpen] = useState(false)
 
+  // Add a ref to access StoryBuilder methods
+  const storyBuilderRef = useRef<any>(null);
+
   // Load data using our service
   useEffect(() => {
     const loadData = async () => {
@@ -245,13 +223,17 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
       setError(null)
 
       try {
+        console.log(`Loading data for project: ${projectId}, version: ${versionId}`);
+        
         // Get project from service
         const projectData = storyboardService.getProject(projectId)
         if (!projectData) {
+          console.error(`Project not found: ${projectId}`);
           setError("Proyecto no encontrado")
           setIsLoading(false)
           return
         }
+        console.log("Project data loaded:", projectData);
         setProject(projectData)
 
         // Get version from service
@@ -262,7 +244,17 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
           setIsLoading(false)
           return
         }
-        setVersion(versionData)
+        
+        console.log("Version data loaded:", versionData);
+        console.log("Version scenes:", versionData.scenes);
+        
+        // Ensure scenes array is initialized
+        const versionWithScenes = {
+          ...versionData,
+          scenes: Array.isArray(versionData.scenes) ? versionData.scenes : []
+        };
+        
+        setVersion(versionWithScenes)
 
         // Get all versions for this project
         const projectVersions = storyboardService.getVersions(projectId)
@@ -296,29 +288,23 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
     setIsSaving(true)
     try {
       // Create a new version based on current one
-      const newVersion = {
-        id: `version-${Date.now()}`, // Generate unique ID
+      const newVersion = storyboardService.createVersion({
         projectId,
         name: newVersionName,
         description: `Nueva versión: ${newVersionName}`,
         thumbnail: "/placeholder.svg?height=150&width=200",
         scenes: version.scenes || [],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }
-
-      // Add to versions using service
-      const createdVersion = storyboardService.createVersion(newVersion)
+      })
       
       // Update local state
-      setVersions((prev) => [createdVersion, ...prev])
+      setVersions([newVersion, ...versions])
 
       // Reset form and close modal
       setNewVersionName("")
       setNewVersionModalOpen(false)
       
       // Navigate to the new version
-      router.push(`/storybuilder/projects/${projectId}/version/${createdVersion.id}`)
+      router.push(`/storybuilder/projects/${projectId}/version/${newVersion.id}`)
     } catch (err) {
       console.error("Error creating version:", err)
       alert("Error al crear la versión. Por favor, inténtalo de nuevo.")
@@ -331,47 +317,77 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
     if (!version || isSaving) return
     
     setIsSaving(true)
+    
+    // Get the latest scenes directly from the StoryBuilder component if available
+    let currentScenes = version.scenes;
+    
+    // Check if the ref has a getCurrentScenes method (we'll need to add this to StoryBuilder)
+    if (storyBuilderRef.current && typeof storyBuilderRef.current.getCurrentScenes === 'function') {
+      console.log("Getting latest scenes from StoryBuilder component");
+      currentScenes = storyBuilderRef.current.getCurrentScenes();
+    } else {
+      console.log("StoryBuilder ref not available, using version state scenes");
+    }
+    
+    console.log("Saving storyboard with scenes:", currentScenes);
 
-    // Simple timeout to simulate API call (1.5 seconds)
-    setTimeout(() => {
-      try {
-        // Update using service
-        const updatedVersion = storyboardService.updateVersion(version.id, {
-          scenes: version.scenes
-        })
-        
-        // Update local state
-        setVersion(updatedVersion)
-        setVersions((prev) => prev.map((v) => (v.id === updatedVersion.id ? updatedVersion : v)))
-        
-        // Show toast notification
-        toast({
-          title: "Guardado con éxito",
-          description: "El storyboard ha sido guardado correctamente.",
-          duration: 3000,
-        })
-      } catch (err) {
-        console.error("Error saving storyboard:", err)
-        toast({
-          title: "Error al guardar",
-          description: "No se pudo guardar el storyboard. Inténtalo de nuevo.",
-          variant: "destructive",
-          duration: 3000,
-        })
-      } finally {
-        // Reset saving state
-        setIsSaving(false)
-      }
-    }, 1500) // 1.5 second loading time
+    try {
+      // Make sure we're explicitly passing the complete version object with the latest scenes
+      const updatedVersion = storyboardService.updateVersion(version.id, {
+        ...version,
+        scenes: currentScenes
+      });
+      
+      console.log("Version updated in localStorage:", updatedVersion);
+      
+      // Verify data was saved by re-fetching it
+      const verifyVersion = storyboardService.getVersion(version.id);
+      console.log("Verification - version from localStorage:", verifyVersion);
+      console.log("Verification - saved scenes:", verifyVersion?.scenes);
+      
+      // Update local state
+      setVersion(updatedVersion);
+      setVersions(prev => prev.map(v => v.id === updatedVersion.id ? updatedVersion : v));
+      
+      // Show toast notification
+      toast({
+        title: "Guardado con éxito",
+        description: "El storyboard ha sido guardado correctamente.",
+        duration: 3000,
+      });
+
+    } catch (err) {
+      console.error("Error saving storyboard:", err);
+      toast({
+        title: "Error al guardar",
+        description: "No se pudo guardar el storyboard. Inténtalo de nuevo.",
+        variant: "destructive",
+        duration: 3000,
+      });
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   // Handle scene updates from the StoryBuilder component
   const handleScenesUpdate = (updatedScenes: any[]) => {
     if (version) {
-      setVersion({
+      console.log("Scene update received from StoryBuilder:", updatedScenes);
+      
+      // Deep clone to ensure we have fresh references
+      const updatedScenesClone = JSON.parse(JSON.stringify(updatedScenes));
+      
+      // Create a new version object with the updated scenes
+      const updatedVersion = {
         ...version,
-        scenes: updatedScenes,
-      })
+        scenes: updatedScenesClone,
+      };
+      
+      // Update the local state with the new version
+      setVersion(updatedVersion);
+      
+      // Debug: Log the current version state after update
+      console.log("Version state after scene update:", updatedVersion);
     }
   }
 
@@ -411,7 +427,6 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
         versionId={versionId}
         projectId={projectId}
         isSaving={isSaving}
-        saveMessage={saveMessage}
         showVersionsDropdown={showVersionsDropdown}
         setShowVersionsDropdown={setShowVersionsDropdown}
         openNewVersionModal={() => setNewVersionModalOpen(true)}
@@ -422,10 +437,12 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
       {/* Main Content Area */}
       <div className="flex-1 overflow-auto p-4 bg-app-bg">
         <StoryBuilder 
+          ref={storyBuilderRef}
           initialScenes={version.scenes || []} 
           projectId={projectId} 
           versionId={versionId} 
           onScenesUpdate={handleScenesUpdate}
+          key={`storybuilder-${versionId}`} // Add a key to force re-render when version changes
         />
       </div>
 
@@ -455,7 +472,7 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
                 setNewVersionModalOpen(false)
                 setNewVersionName("")
               }}
-              className="border-gray-700 text-gray-300 hover:bg-gray-800"
+              className="border-gray-700 text-slate-700 hover:bg-slate-700 hover:text-gray-200 hover:border-gray-600"
             >
               Cancelar
             </Button>
@@ -474,4 +491,3 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
     </div>
   )
 }
-

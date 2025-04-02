@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Play, Download, Share2, Plus, GripVertical, RefreshCw, MessageSquare, ImageIcon, Trash2 } from "lucide-react"
@@ -195,13 +195,13 @@ const SceneCard = ({
   scene,
   index,
   scenes,
-  setScenes,
+  updateScenes,
   onDeleteScene,
 }: {
   scene: SceneProps
   index: number
   scenes: SceneProps[]
-  setScenes: React.Dispatch<React.SetStateAction<SceneProps[]>>
+  updateScenes: (scenes: SceneProps[]) => void
   onDeleteScene: (id: number) => void
 }) => {
   const [isDragging, setIsDragging] = useState(false)
@@ -240,7 +240,7 @@ const SceneCard = ({
       const file = e.dataTransfer.files[0]
       const imageUrl = URL.createObjectURL(file)
 
-      setScenes(scenes.map((s) => (s.id === scene.id ? { ...s, image: imageUrl } : s)))
+      updateScenes(scenes.map((s) => (s.id === scene.id ? { ...s, image: imageUrl } : s)))
     }
   }
 
@@ -249,7 +249,7 @@ const SceneCard = ({
       const file = e.target.files[0]
       const imageUrl = URL.createObjectURL(file)
 
-      setScenes(scenes.map((s) => (s.id === scene.id ? { ...s, image: imageUrl } : s)))
+      updateScenes(scenes.map((s) => (s.id === scene.id ? { ...s, image: imageUrl } : s)))
     }
   }
 
@@ -260,15 +260,15 @@ const SceneCard = ({
   }
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setScenes(scenes.map((s) => (s.id === scene.id ? { ...s, title: e.target.value } : s)))
+    updateScenes(scenes.map((s) => (s.id === scene.id ? { ...s, title: e.target.value } : s)))
   }
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setScenes(scenes.map((s) => (s.id === scene.id ? { ...s, description: e.target.value } : s)))
+    updateScenes(scenes.map((s) => (s.id === scene.id ? { ...s, description: e.target.value } : s)))
   }
 
   const handleDialogueChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setScenes(scenes.map((s) => (s.id === scene.id ? { ...s, dialogue: e.target.value } : s)))
+    updateScenes(scenes.map((s) => (s.id === scene.id ? { ...s, dialogue: e.target.value } : s)))
   }
 
   // Function to generate AI content (placeholder for future implementation)
@@ -408,246 +408,278 @@ const SceneCard = ({
   )
 }
 
+export interface StoryBuilderHandle {
+  getCurrentScenes: () => SceneProps[]
+}
+
 interface StoryBuilderProps {
   initialScenes?: SceneProps[]
   projectId: string
   versionId: string
+  onScenesUpdate: (scenes: SceneProps[]) => void
 }
 
-const StoryBuilder = ({ initialScenes, projectId, versionId }: StoryBuilderProps) => {
-  // State for managing scenes
-  const [scenes, setScenes] = useState<SceneProps[]>(
-    initialScenes || [
-      {
-        id: 1,
-        title: "Niño recibe regalo",
-        description:
-          "Un niño sonriente abre una caja de regalo colorida en su cumpleaños mientras sus padres observan con anticipación.",
-        dialogue: 'Niño: "¡No puedo esperar para ver qué es!" Padres: "Esperamos que te guste, cariño."',
-        image: "/placeholder.svg?height=200&width=200",
-        color: "bg-purple-500",
-      },
-      {
-        id: 2,
-        title: "Robot emerge del regalo",
-        description:
-          "Un pequeño robot amigable con luces brillantes emerge de la caja de regalo, sorprendiendo a todos los presentes.",
-        dialogue: 'Robot: "¡Hola! Soy tu nuevo amigo." Niño: "¡Wow! ¡Un robot!"',
-        image: "/placeholder.svg?height=200&width=200",
-        color: "bg-indigo-500",
-      },
-      {
-        id: 3,
-        title: "Niño sorprendido",
-        description:
-          "El niño mira con asombro al robot mientras éste despliega pequeñas alas y flota brevemente sobre la mesa.",
-        dialogue: 'Niño: "¡Puede volar!" Robot: "¡Tengo muchas más sorpresas para ti!"',
-        image: "/placeholder.svg?height=200&width=200",
-        color: "bg-violet-500",
-      },
-    ],
-  )
+// Modificar StoryBuilder para usar forwardRef
+const StoryBuilder = forwardRef<StoryBuilderHandle, StoryBuilderProps>(
+  ({ initialScenes, projectId, versionId, onScenesUpdate }, ref) => {
+    // State for managing scenes
+    const [scenes, setScenes] = useState<SceneProps[]>(
+      initialScenes || [
+        {
+          id: 1,
+          title: "Niño recibe regalo",
+          description:
+            "Un niño sonriente abre una caja de regalo colorida en su cumpleaños mientras sus padres observan con anticipación.",
+          dialogue: 'Niño: "¡No puedo esperar para ver qué es!" Padres: "Esperamos que te guste, cariño."',
+          image: "/placeholder.svg?height=200&width=200",
+          color: "bg-purple-500",
+        },
+        {
+          id: 2,
+          title: "Robot emerge del regalo",
+          description:
+            "Un pequeño robot amigable con luces brillantes emerge de la caja de regalo, sorprendiendo a todos los presentes.",
+          dialogue: 'Robot: "¡Hola! Soy tu nuevo amigo." Niño: "¡Wow! ¡Un robot!"',
+          image: "/placeholder.svg?height=200&width=200",
+          color: "bg-indigo-500",
+        },
+        {
+          id: 3,
+          title: "Niño sorprendido",
+          description:
+            "El niño mira con asombro al robot mientras éste despliega pequeñas alas y flota brevemente sobre la mesa.",
+          dialogue: 'Niño: "¡Puede volar!" Robot: "¡Tengo muchas más sorpresas para ti!"',
+          image: "/placeholder.svg?height=200&width=200",
+          color: "bg-violet-500",
+        },
+      ],
+    )
 
-  const [activeScene, setActiveScene] = useState<number>(scenes.length > 0 ? scenes[0].id : 1)
-  const [isDragging, setIsDragging] = useState<boolean>(false)
-  const [activeId, setActiveId] = useState<number | null>(null)
-  const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean; sceneId: number | null }>({
-    isOpen: false,
-    sceneId: null,
-  })
+    const [activeScene, setActiveScene] = useState<number>(scenes.length > 0 ? scenes[0].id : 1)
+    const [isDragging, setIsDragging] = useState<boolean>(false)
+    const [activeId, setActiveId] = useState<number | null>(null)
+    const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean; sceneId: number | null }>({
+      isOpen: false,
+      sceneId: null,
+    })
 
-  // Update scenes when initialScenes changes (e.g., when switching projects)
-  useEffect(() => {
-    if (initialScenes && initialScenes.length > 0) {
-      setScenes(initialScenes)
-      setActiveScene(initialScenes[0].id)
-    } else if (initialScenes && initialScenes.length === 0) {
-      // If there are no scenes, create a default one
-      const defaultScene = {
-        id: 1,
-        title: "Nueva escena",
+    // Update scenes when initialScenes changes (e.g., when switching projects)
+    useEffect(() => {
+      if (initialScenes && initialScenes.length > 0) {
+        setScenes(initialScenes)
+        setActiveScene(initialScenes[0].id)
+      } else if (initialScenes && initialScenes.length === 0) {
+        // If there are no scenes, create a default one
+        const defaultScene = {
+          id: 1,
+          title: "Nueva escena",
+          description: "",
+          dialogue: "",
+          image: null,
+          color: "bg-purple-500",
+        }
+        setScenes([defaultScene])
+        setActiveScene(1)
+      }
+    }, [initialScenes, projectId, versionId])
+
+    // Log initial scenes for debugging
+    useEffect(() => {
+      console.log("StoryBuilder received initial scenes:", initialScenes)
+    }, [initialScenes])
+
+    // Set up sensors for drag and drop with lower activation constraint for better responsiveness
+    const sensors = useSensors(
+      useSensor(PointerSensor, {
+        activationConstraint: {
+          distance: 3, // Reduced from 5px to 3px for quicker activation
+        },
+      }),
+      useSensor(KeyboardSensor, {
+        coordinateGetter: sortableKeyboardCoordinates,
+      }),
+    )
+
+    // Refs
+    const fileInputRef = useRef<HTMLInputElement>(null)
+
+    // Add a mounted state to handle hydration issues
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+      setMounted(true)
+    }, [])
+
+    // Expose getCurrentScenes to parent component
+    useImperativeHandle(ref, () => ({
+      getCurrentScenes: () => {
+        console.log("getCurrentScenes called, returning latest scenes:", scenes)
+        return scenes
+      },
+    }))
+
+    // Update scenes and call onScenesUpdate
+    const updateScenes = (newScenes: SceneProps[]) => {
+      setScenes(newScenes)
+      onScenesUpdate(newScenes)
+      console.log("Scenes updated in StoryBuilder:", newScenes)
+    }
+
+    // Function to handle adding a new scene
+    const handleAddScene = () => {
+      const newId = scenes.length > 0 ? Math.max(...scenes.map((scene) => scene.id)) + 1 : 1
+      const colors = ["bg-purple-500", "bg-indigo-500", "bg-violet-500", "bg-fuchsia-500", "bg-pink-500"]
+      const colorIndex = newId % colors.length
+
+      const newScene: SceneProps = {
+        id: newId,
+        title: `Nueva escena`,
         description: "",
         dialogue: "",
         image: null,
-        color: "bg-purple-500",
+        color: colors[colorIndex],
       }
-      setScenes([defaultScene])
-      setActiveScene(1)
-    }
-  }, [initialScenes, projectId, versionId])
 
-  // Set up sensors for drag and drop with lower activation constraint for better responsiveness
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 3, // Reduced from 5px to 3px for quicker activation
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  )
-
-  // Refs
-  const fileInputRef = useRef<HTMLInputElement>(null)
-
-  // Add a mounted state to handle hydration issues
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  // Function to handle adding a new scene
-  const handleAddScene = () => {
-    const newId = scenes.length > 0 ? Math.max(...scenes.map((scene) => scene.id)) + 1 : 1
-    const colors = ["bg-purple-500", "bg-indigo-500", "bg-violet-500", "bg-fuchsia-500", "bg-pink-500"]
-    const colorIndex = newId % colors.length
-
-    const newScene: SceneProps = {
-      id: newId,
-      title: `Nueva escena`,
-      description: "",
-      dialogue: "",
-      image: null,
-      color: colors[colorIndex],
+      const updatedScenes = [...scenes, newScene]
+      updateScenes(updatedScenes)
+      setActiveScene(newId)
+      console.log("Adding new scene:", newScene)
+      console.log("Updated scenes array:", updatedScenes)
     }
 
-    setScenes([...scenes, newScene])
-    setActiveScene(newId)
-  }
-
-  // Function to open delete confirmation modal
-  const openDeleteModal = (id: number) => {
-    setConfirmModal({
-      isOpen: true,
-      sceneId: id,
-    })
-  }
-
-  // Function to delete a scene
-  const handleDeleteScene = (id: number) => {
-    const filteredScenes = scenes.filter((scene) => scene.id !== id)
-    setScenes(filteredScenes)
-
-    // If the active scene was deleted, set the first scene as active
-    if (activeScene === id && filteredScenes.length > 0) {
-      setActiveScene(filteredScenes[0].id)
-    }
-  }
-
-  // Function to handle drag start
-  const handleDragStart = (event: any) => {
-    setActiveId(event.active.id)
-  }
-
-  // Function to handle drag end for reordering scenes
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event
-    setActiveId(null)
-
-    if (!over || active.id === over.id) {
-      return
+    // Function to open delete confirmation modal
+    const openDeleteModal = (id: number) => {
+      setConfirmModal({
+        isOpen: true,
+        sceneId: id,
+      })
     }
 
-    setScenes((items) => {
-      const oldIndex = items.findIndex((item) => item.id === active.id)
-      const newIndex = items.findIndex((item) => item.id === over.id)
+    // Function to delete a scene
+    const handleDeleteScene = (id: number) => {
+      const filteredScenes = scenes.filter((scene) => scene.id !== id)
+      updateScenes(filteredScenes)
 
-      return arrayMove(items, oldIndex, newIndex)
-    })
-  }
+      // If the active scene was deleted, set the first scene as active
+      if (activeScene === id && filteredScenes.length > 0) {
+        setActiveScene(filteredScenes[0].id)
+      }
 
-  // Function to generate AI content (placeholder for future implementation)
-  const generateAIContent = (type: "description" | "dialogue" | "image") => {
-    // This would be replaced with actual AI generation in the future
-    const loadingMessages = {
-      description: "Generando descripción con IA...",
-      dialogue: "Creando diálogos con IA...",
-      image: "Generando imagen con IA...",
+      console.log("Deleting scene with id:", id)
+      console.log("Updated scenes array after deletion:", filteredScenes)
     }
 
-    alert(`${loadingMessages[type]} (Funcionalidad a implementar)`)
-  }
+    // Function to handle drag start
+    const handleDragStart = (event: any) => {
+      setActiveId(event.active.id)
+    }
 
-  // Find the active scene for drag overlay
-  const activeScene2 = activeId ? scenes.find((scene) => scene.id === activeId) : null
-  const activeIndex = activeScene2 ? scenes.findIndex((scene) => scene.id === activeScene2.id) : -1
+    // Function to handle drag end for reordering scenes
+    const handleDragEnd = (event: DragEndEvent) => {
+      const { active, over } = event
+      setActiveId(null)
 
-  return (
-    <div className="w-full h-full overflow-auto p-4 bg-app-bg">
-      {/* Confirmation Modal */}
-      <ConfirmModal
-        isOpen={confirmModal.isOpen}
-        onClose={() => setConfirmModal({ isOpen: false, sceneId: null })}
-        onConfirm={() => {
-          if (confirmModal.sceneId !== null) {
-            handleDeleteScene(confirmModal.sceneId)
-          }
-        }}
-        title="Eliminar escena"
-        message="¿Estás seguro de que deseas eliminar esta escena? Esta acción no se puede deshacer."
-      />
+      if (!over || active.id === over.id) {
+        return
+      }
 
-      {/* Main content - Grid of scenes */}
-      {mounted && (
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-          onDragStart={handleDragStart}
-        >
-          <SortableContext items={scenes.map((scene) => scene.id)} strategy={verticalListSortingStrategy}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-              {scenes.map((scene, index) => (
-                <div
-                  key={scene.id}
-                  className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg border border-purple-500/20 shadow-glow-sm overflow-hidden"
+      const updatedScenes = arrayMove(scenes, scenes.findIndex((item) => item.id === active.id), scenes.findIndex((item) => item.id === over.id))
+      updateScenes(updatedScenes)
+      console.log("Reordering scenes:", updatedScenes)
+    }
+
+    // Function to generate AI content (placeholder for future implementation)
+    const generateAIContent = (type: "description" | "dialogue" | "image") => {
+      // This would be replaced with actual AI generation in the future
+      const loadingMessages = {
+        description: "Generando descripción con IA...",
+        dialogue: "Creando diálogos con IA...",
+        image: "Generando imagen con IA...",
+      }
+
+      alert(`${loadingMessages[type]} (Funcionalidad a implementar)`)
+    }
+
+    // Find the active scene for drag overlay
+    const activeScene2 = activeId ? scenes.find((scene) => scene.id === activeId) : null
+    const activeIndex = activeScene2 ? scenes.findIndex((scene) => scene.id === activeScene2.id) : -1
+
+    return (
+      <div className="w-full h-full overflow-auto p-4 bg-app-bg">
+        {/* Confirmation Modal */}
+        <ConfirmModal
+          isOpen={confirmModal.isOpen}
+          onClose={() => setConfirmModal({ isOpen: false, sceneId: null })}
+          onConfirm={() => {
+            if (confirmModal.sceneId !== null) {
+              handleDeleteScene(confirmModal.sceneId)
+            }
+          }}
+          title="Eliminar escena"
+          message="¿Estás seguro de que deseas eliminar esta escena? Esta acción no se puede deshacer."
+        />
+
+        {/* Main content - Grid of scenes */}
+        {mounted && (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+            onDragStart={handleDragStart}
+          >
+            <SortableContext items={scenes.map((scene) => scene.id)} strategy={verticalListSortingStrategy}>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                {scenes.map((scene, index) => (
+                  <div
+                    key={scene.id}
+                    className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg border border-purple-500/20 shadow-glow-sm overflow-hidden"
+                  >
+                    <SceneCard
+                      scene={scene}
+                      index={index}
+                      scenes={scenes}
+                      updateScenes={updateScenes}
+                      onDeleteScene={openDeleteModal}
+                    />
+                  </div>
+                ))}
+
+                {/* Add New Scene Card */}
+                <button
+                  onClick={handleAddScene}
+                  className="bg-gray-900/90 rounded-lg shadow-glow-sm border border-dashed border-purple-500/30 flex items-center justify-center h-64 hover:bg-gray-800/90 hover:border-purple-500/50 transition-colors"
                 >
-                  <SceneCard
-                    scene={scene}
-                    index={index}
-                    scenes={scenes}
-                    setScenes={setScenes}
-                    onDeleteScene={openDeleteModal}
-                  />
-                </div>
-              ))}
+                  <div className="flex flex-col items-center text-gray-400">
+                    <Plus className="h-8 w-8 mb-2" />
+                    <span>Añadir Escena</span>
+                  </div>
+                </button>
+              </div>
 
-              {/* Add New Scene Card */}
-              <button
-                onClick={handleAddScene}
-                className="bg-gray-900/90 rounded-lg shadow-glow-sm border border-dashed border-purple-500/30 flex items-center justify-center h-64 hover:bg-gray-800/90 hover:border-purple-500/50 transition-colors"
-              >
-                <div className="flex flex-col items-center text-gray-400">
-                  <Plus className="h-8 w-8 mb-2" />
-                  <span>Añadir Escena</span>
-                </div>
-              </button>
-            </div>
+              {/* Drag Overlay for improved visual feedback */}
+              <DragOverlay>
+                {activeId && activeScene2 && (
+                  <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg border border-purple-500 shadow-glow-md overflow-hidden opacity-80">
+                    <SceneCard
+                      scene={activeScene2}
+                      index={activeIndex}
+                      scenes={scenes}
+                      updateScenes={updateScenes}
+                      onDeleteScene={openDeleteModal}
+                    />
+                  </div>
+                )}
+              </DragOverlay>
+            </SortableContext>
+          </DndContext>
+        )}
+      </div>
+    )
+  }
+)
 
-            {/* Drag Overlay for improved visual feedback */}
-            <DragOverlay>
-              {activeId && activeScene2 && (
-                <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg border border-purple-500 shadow-glow-md overflow-hidden opacity-80">
-                  <SceneCard
-                    scene={activeScene2}
-                    index={activeIndex}
-                    scenes={scenes}
-                    setScenes={setScenes}
-                    onDeleteScene={openDeleteModal}
-                  />
-                </div>
-              )}
-            </DragOverlay>
-          </SortableContext>
-        </DndContext>
-      )}
-
-
-    </div>
-  )
-}
+// Asignar un displayName para herramientas de desarrollo
+StoryBuilder.displayName = 'StoryBuilder'
 
 export default StoryBuilder
 
