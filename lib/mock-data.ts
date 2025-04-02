@@ -1,0 +1,151 @@
+import type { SceneProps } from "@/components/story-builder/story-builder";
+import type { Project, Version } from "./api";
+
+// Mock data for projects
+export const mockProjects: Project[] = [
+  {
+    id: "project-1",
+    name: "El niño y el robot",
+    description: "Una historia de ciencia ficción sobre exploradores espaciales que descubren un planeta misterioso.",
+    createdAt: "2023-01-15T10:30:00Z",
+    updatedAt: "2023-05-20T14:45:00Z",
+    thumbnail: "/placeholder.svg?height=150&width=200",
+    versionCount: 3,
+  },
+  {
+    id: "project-2",
+    name: "El Misterio del Bosque",
+    description: "Un thriller de suspense sobre extraños sucesos en un pequeño pueblo rodeado de bosques.",
+    createdAt: "2023-02-10T09:15:00Z",
+    updatedAt: "2023-06-05T11:20:00Z",
+    thumbnail: "/placeholder.svg?height=150&width=200",
+    versionCount: 2,
+  },
+  {
+    id: "project-3",
+    name: "Historias de la Ciudad",
+    description: "Una serie de relatos interconectados sobre la vida en una gran metrópolis.",
+    createdAt: "2023-03-22T16:40:00Z",
+    updatedAt: "2023-04-18T13:10:00Z",
+    thumbnail: "/placeholder.svg?height=150&width=200",
+    versionCount: 1,
+  },
+  {
+    id: "project-4",
+    name: "El Último Viaje",
+    description: "Un drama emotivo sobre un viaje de autodescubrimiento a través de paisajes impresionantes.",
+    createdAt: "2023-04-05T08:20:00Z",
+    updatedAt: "2023-05-30T17:35:00Z",
+    thumbnail: "/placeholder.svg?height=150&width=200",
+    versionCount: 4,
+  },
+];
+
+// Mock data for versions
+export const mockVersions: Version[] = [
+  {
+    id: "version-1",
+    projectId: "project-1",
+    name: "Versión 1",
+    description: "Primera versión del storyboard con escenas iniciales.",
+    createdAt: "2023-01-15T10:30:00Z",
+    updatedAt: "2023-01-20T14:45:00Z",
+    thumbnail: "/placeholder.svg?height=150&width=200",
+    scenes: [] as SceneProps[],
+  },
+  {
+    id: "version-2",
+    projectId: "project-1",
+    name: "Versión 2",
+    description: "Segunda versión con escenas adicionales y mejoras en la narrativa.",
+    createdAt: "2023-03-10T09:15:00Z",
+    updatedAt: "2023-03-15T11:20:00Z",
+    thumbnail: "/placeholder.svg?height=150&width=200",
+    scenes: [] as SceneProps[],
+  },
+  {
+    id: "version-3",
+    projectId: "project-1",
+    name: "Versión Final",
+    description: "Versión final con todas las escenas y diálogos completos.",
+    createdAt: "2023-05-05T16:40:00Z",
+    updatedAt: "2023-05-20T13:10:00Z",
+    thumbnail: "/placeholder.svg?height=150&width=200",
+    scenes: [] as SceneProps[],
+  },
+  {
+    id: "version-4",
+    projectId: "project-2",
+    name: "Borrador Inicial",
+    description: "Primer borrador con escenas clave.",
+    createdAt: "2023-02-10T09:15:00Z",
+    updatedAt: "2023-02-15T11:20:00Z",
+    thumbnail: "/placeholder.svg?height=150&width=200",
+    scenes: [] as SceneProps[],
+  },
+  {
+    id: "version-5",
+    projectId: "project-2",
+    name: "Versión Revisada",
+    description: "Versión con correcciones basadas en feedback.",
+    createdAt: "2023-06-01T14:30:00Z",
+    updatedAt: "2023-06-05T16:45:00Z",
+    thumbnail: "/placeholder.svg?height=150&width=200",
+    scenes: [] as SceneProps[],
+  },
+  {
+    id: "version-6",
+    projectId: "project-3",
+    name: "Primer Borrador",
+    description: "Versión inicial con estructura básica.",
+    createdAt: "2023-03-22T16:40:00Z",
+    updatedAt: "2023-04-18T13:10:00Z",
+    thumbnail: "/placeholder.svg?height=150&width=200",
+    scenes: [] as SceneProps[],
+  },
+  {
+    id: "version-7",
+    projectId: "project-4",
+    name: "Escenas Principales",
+    description: "Versión con las escenas principales del viaje.",
+    createdAt: "2023-04-05T08:20:00Z",
+    updatedAt: "2023-04-10T12:35:00Z",
+    thumbnail: "/placeholder.svg?height=150&width=200",
+    scenes: [] as SceneProps[],
+  },
+  {
+    id: "version-8",
+    projectId: "project-4",
+    name: "Desarrollo de Personajes",
+    description: "Versión enfocada en el desarrollo de los personajes principales.",
+    createdAt: "2023-04-15T10:45:00Z",
+    updatedAt: "2023-04-20T15:30:00Z",
+    thumbnail: "/placeholder.svg?height=150&width=200",
+    scenes: [] as SceneProps[],
+  },
+  {
+    id: "version-9",
+    projectId: "project-4",
+    name: "Escenas Climáticas",
+    description: "Versión con énfasis en las escenas climáticas de la historia.",
+    createdAt: "2023-05-01T09:10:00Z",
+    updatedAt: "2023-05-10T14:25:00Z",
+    thumbnail: "/placeholder.svg?height=150&width=200",
+    scenes: [] as SceneProps[],
+  },
+  {
+    id: "version-10",
+    projectId: "project-4",
+    name: "Versión Final",
+    description: "Versión final con todas las escenas y transiciones pulidas.",
+    createdAt: "2023-05-20T11:30:00Z",
+    updatedAt: "2023-05-30T17:35:00Z",
+    thumbnail: "/placeholder.svg?height=150&width=200",
+    scenes: [] as SceneProps[],
+  },
+];
+
+// We're exporting these data structures directly so they can be imported 
+// elsewhere, but we also need to make them available in mutable form 
+// via the storyboard service for simulating API operations.
+
