@@ -13,19 +13,12 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
-import { Plus, Folder, Shell } from "lucide-react"
+import { Plus, Folder, Shell, Pencil, X } from "lucide-react"
 import { storyboardService } from "@/lib/storyboard-service"
 import type { Project } from "@/lib/api"
 import Link from "next/link"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { EntityNameDialog } from "@/components/story-builder/entity-name-dialog"
+import { ConfirmModal } from "@/components/ui/confirm-modal"
 
 interface ProjectSidebarProps {
   pathname: string
@@ -46,8 +39,16 @@ export function ProjectSidebar({ pathname }: ProjectSidebarProps) {
   
   // New project modal state
   const [newProjectModalOpen, setNewProjectModalOpen] = useState(false)
-  const [newProjectName, setNewProjectName] = useState("")
   const [isCreating, setIsCreating] = useState(false)
+  
+  // Edit project modal state
+  const [editProjectModalOpen, setEditProjectModalOpen] = useState(false)
+  const [projectToEdit, setProjectToEdit] = useState<Project | null>(null)
+  const [isEditing, setIsEditing] = useState(false)
+  
+  // Delete project confirmation modal state
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false)
+  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null)
 
   // Fetch projects when component mounts
   useEffect(() => {
@@ -56,8 +57,6 @@ export function ProjectSidebar({ pathname }: ProjectSidebarProps) {
       setError(null)
 
       try {
-
-        // Then get the projects (which may now include demo data)
         const projectsData = storyboardService.getProjects()
         setProjects(projectsData)
       } catch (err) {
@@ -82,15 +81,11 @@ export function ProjectSidebar({ pathname }: ProjectSidebarProps) {
     setSelectedProject(projectId)
 
     try {
-      // Get versions for this project
       const versions = storyboardService.getVersions(projectId)
       
-      // If project has versions, navigate to the first one
-      // Otherwise, we need to create a default version
       if (versions.length > 0) {
         router.push(`/storybuilder/projects/${projectId}/version/${versions[0].id}`)
       } else {
-        // Create default version
         const newVersion = storyboardService.createVersion({
           projectId: projectId,
           name: "Version 1",
@@ -99,7 +94,6 @@ export function ProjectSidebar({ pathname }: ProjectSidebarProps) {
           scenes: []
         })
         
-        // Navigate to the new version
         router.push(`/storybuilder/projects/${projectId}/version/${newVersion.id}`)
       }
     } catch (err) {
@@ -108,20 +102,18 @@ export function ProjectSidebar({ pathname }: ProjectSidebarProps) {
     }
   }
 
-  const createNewProject = async () => {
+  const createNewProject = async (newProjectName: string) => {
     if (!newProjectName.trim()) return;
     
     setIsCreating(true);
     
     try {
-      // Create a new project with the user-provided name
       const newProject = storyboardService.createProject({
         name: newProjectName,
         description: `Proyecto: ${newProjectName}`,
         thumbnail: "/placeholder.svg?height=150&width=200",
       })
       
-      // Create initial version for this project
       const initialVersion = storyboardService.createVersion({
         projectId: newProject.id,
         name: "Version 1",
@@ -130,14 +122,11 @@ export function ProjectSidebar({ pathname }: ProjectSidebarProps) {
         scenes: []
       })
       
-      // Update local state
       setProjects([newProject, ...projects])
       
-      // Close modal and reset form
+      // Close the modal before navigation
       setNewProjectModalOpen(false)
-      setNewProjectName("")
       
-      // Navigate to the new project with its initial version
       router.push(`/storybuilder/projects/${newProject.id}/version/${initialVersion.id}`)
     } catch (err) {
       console.error("Error creating project:", err)
@@ -146,24 +135,84 @@ export function ProjectSidebar({ pathname }: ProjectSidebarProps) {
       setIsCreating(false)
     }
   }
+  
+  const handleEditProject = (project: Project, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setProjectToEdit(project);
+    setEditProjectModalOpen(true);
+  }
+  
+  const handleDeleteProject = (project: Project, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setProjectToDelete(project);
+    setConfirmModalOpen(true);
+  }
+  
+  const confirmDeleteProject = () => {
+    if (!projectToDelete) return;
+    
+    try {
+      const versions = storyboardService.getVersions(projectToDelete.id);
+      versions.forEach(version => {
+        // storyboardService.deleteVersion(version.id);
+      });
+      
+      const updatedProjects = projects.filter(p => p.id !== projectToDelete.id);
+      storyboardService.updateProjects(updatedProjects);
+      
+      setProjects(updatedProjects);
+      
+      if (selectedProject === projectToDelete.id) {
+        if (updatedProjects.length > 0) {
+          handleProjectClick(updatedProjects[0].id);
+        } else {
+          router.push('/storybuilder');
+        }
+      }
+    } catch (err) {
+      console.error("Error deleting project:", err);
+      alert("Error al eliminar el proyecto. Por favor, inténtalo de nuevo.");
+    }
+  }
+  
+  const saveProjectEdit = async (newName: string) => {
+    if (!projectToEdit || !newName.trim()) return;
+    
+    setIsEditing(true);
+    
+    try {
+      const updatedProject = storyboardService.updateProject(projectToEdit.id, {
+        name: newName
+      });
+      
+      setProjects(projects.map(p => p.id === updatedProject.id ? updatedProject : p));
+      
+      setEditProjectModalOpen(false);
+      setProjectToEdit(null);
+    } catch (err) {
+      console.error("Error updating project:", err);
+      alert("Error al actualizar el proyecto. Por favor, inténtalo de nuevo.");
+    } finally {
+      setIsEditing(false);
+    }
+  }
 
   return (
     <Sidebar className="border-r border-gray-800">
       <SidebarHeader className="border-b border-gray-800 h-14 py-2">
         <div className="flex items-center justify-between px-4">
           <Link href="/main" className="text-lg font-semibold text-white">
-        StoryBuilder AI
+            StoryBuilder AI
           </Link>
         </div>
       </SidebarHeader>
 
       <SidebarContent>
-        {/* Projects Section */}
         <SidebarGroup>
           <div className="flex items-center justify-between px-4 py-2">
             <div className="flex items-center space-x-2">
-            <Folder className="h-4 w-4 text-gray-400 " />
-            <SidebarGroupLabel className="text-md">Proyectos</SidebarGroupLabel>
+              <Folder className="h-4 w-4 text-gray-400 " />
+              <SidebarGroupLabel className="text-md">Proyectos</SidebarGroupLabel>
             </div>
 
             <Button
@@ -188,17 +237,35 @@ export function ProjectSidebar({ pathname }: ProjectSidebarProps) {
                 <div className="space-y-2 px-2">
                   {projects.map((project) => (
                     <div key={project.id} className="mb-2">
-                      <button
+                      <div
                         onClick={() => handleProjectClick(project.id)}
-                        className={`w-full px-3 py-2 rounded-md flex items-center text-left border ${
+                        className={`w-full px-3 py-2 rounded-md flex items-center justify-between text-left border cursor-pointer ${
                           selectedProject === project.id
                             ? "bg-purple-900/30 border-purple-500 text-white"
                             : "bg-gray-800/50 border-gray-700 text-gray-200 hover:bg-gray-800 hover:border-gray-600"
-                        } transition-colors space-x-2`}
+                        } transition-colors`}
                       >
-                        <Shell className="mr-2 h-2 w-2 flex-shrink-0 " />
-                        <span className="truncate">{project.name}</span>
-                      </button>
+                        <div className="flex items-center space-x-2 truncate">
+                          <Shell className="h-2 w-2 flex-shrink-0" />
+                          <span className="truncate">{project.name}</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <button 
+                            onClick={(e) => handleEditProject(project, e)}
+                            className="p-1 rounded-sm hover:bg-gray-700 text-gray-400 hover:text-white"
+                            aria-label="Edit project"
+                          >
+                            <Pencil className="h-3 w-3" />
+                          </button>
+                          <button 
+                            onClick={(e) => handleDeleteProject(project, e)}
+                            className="p-1 rounded-sm hover:bg-gray-700 text-gray-400 hover:text-white"
+                            aria-label="Delete project"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -208,48 +275,38 @@ export function ProjectSidebar({ pathname }: ProjectSidebarProps) {
         </SidebarGroup>
       </SidebarContent>
       
-      {/* New Project Creation Modal */}
-      <Dialog open={newProjectModalOpen} onOpenChange={setNewProjectModalOpen}>
-        <DialogContent className="sm:max-w-md bg-gray-900 border-gray-800 text-white">
-          <DialogHeader>
-            <DialogTitle className="text-white">Crear nuevo proyecto</DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <div className="space-y-2">
-              <Label htmlFor="project-name" className="text-gray-300">Nombre del proyecto</Label>
-              <Input 
-                id="project-name"
-                value={newProjectName} 
-                onChange={(e) => setNewProjectName(e.target.value)}
-                placeholder="Mi Proyecto" 
-                maxLength={30}
-                className="bg-gray-800 border-gray-700 focus:border-purple-500 text-white"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                setNewProjectModalOpen(false)
-                setNewProjectName("")
-              }}
-              className="border-gray-700 text-slate-700 hover:bg-slate-700 hover:text-gray-200 hover:border-gray-600"
-            >
-              Cancelar
-            </Button>
-            <Button
-              onClick={createNewProject}
-              disabled={!newProjectName.trim() || isCreating}
-              className={`${!newProjectName.trim() || isCreating ? 
-                'bg-purple-700/50 cursor-not-allowed' : 
-                'bg-purple-600 hover:bg-purple-700'}`}
-            >
-              {isCreating ? "Creando..." : "Crear"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <EntityNameDialog
+        isOpen={newProjectModalOpen}
+        onOpenChange={setNewProjectModalOpen}
+        onCreateEntity={createNewProject}
+        isCreating={isCreating}
+        title="Crear nuevo proyecto"
+        entityLabel="Nombre del proyecto"
+        placeholder="Mi Proyecto"
+        createButtonText="Crear"
+        maxLength={30}
+      />
+      
+      <EntityNameDialog
+        isOpen={editProjectModalOpen}
+        onOpenChange={setEditProjectModalOpen}
+        onCreateEntity={saveProjectEdit}
+        isCreating={isEditing}
+        title="Editar nombre del proyecto"
+        entityLabel="Nombre del proyecto"
+        placeholder="Mi Proyecto"
+        createButtonText="Guardar"
+        initialValue={projectToEdit?.name}
+        maxLength={30}
+      />
+      
+      <ConfirmModal 
+        isOpen={confirmModalOpen}
+        onClose={() => setConfirmModalOpen(false)}
+        onConfirm={confirmDeleteProject}
+        title="¿Eliminar proyecto?"
+        message={`¿Estás seguro de que deseas eliminar el proyecto "${projectToDelete?.name}"? Esta acción no se puede deshacer.`}
+      />
     </Sidebar>
   )
 }

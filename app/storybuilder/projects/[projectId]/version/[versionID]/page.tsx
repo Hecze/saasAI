@@ -2,17 +2,18 @@
 
 import { useState, useEffect, use, useRef } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { FileText, Save, Clock, Plus, Download, Share2, Play, Video } from "lucide-react"
-import StoryBuilder from "@/components/story-builder/story-builder"
+import { FileText, Save, Clock, Plus, Download, Share2, Play, Video, GripVertical, RefreshCw, MessageSquare, ImageIcon, Trash2 } from "lucide-react"
 import { storyboardService } from "@/lib/storyboard-service"
 import type { Version } from "@/lib/api"
 import { DropdownSelector } from "@/components/story-builder/dropdown-selector"
+import { ActionButton } from "@/components/story-builder/action-button"
+import { EntityNameDialog } from "@/components/story-builder/entity-name-dialog"
+import { ConfirmModal } from "@/components/ui/confirm-modal"
+import { PreviewModal } from "@/components/story-builder/preview-modal"
 import {
-  Tooltip,
-  TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
 } from "@/components/ui/tooltip"
 import {
   Dialog,
@@ -21,172 +22,170 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { useToast } from "@/components/ui/use-toast"
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+  DragOverlay,
+} from "@dnd-kit/core"
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable"
 
 // Helper function to safely use params
 function useParams<T>(params: T | Promise<T>): T {
   return params instanceof Promise ? use(params) : params;
 }
 
-// TopNavigationBar component
-function TopNavigationBar({ 
-  project, 
-  version, 
-  versions,
-  versionId, 
-  projectId,
-  isSaving,
-  showVersionsDropdown,
-  setShowVersionsDropdown,
-  openNewVersionModal,
-  saveStoryboard,
-  router
-}: { 
-  project: any;
-  version: Version;
-  versions: Version[];
-  versionId: string;
-  projectId: string;
-  isSaving: boolean;
-  saveMessage: string;
-  showVersionsDropdown: boolean;
-  setShowVersionsDropdown: (show: boolean) => void;
-  openNewVersionModal: () => void;
-  saveStoryboard: () => void;
-  router: ReturnType<typeof useRouter>;
-}) {
+export interface SceneProps {
+  id: number
+  title: string
+  description: string
+  dialogue: string
+  image: string | null
+  color: string
+}
+
+// Scene Card Component
+const SceneCard = ({
+  scene,
+  index,
+  scenes,
+  updateScenes,
+  onDeleteScene,
+}: {
+  scene: SceneProps
+  index: number
+  scenes: SceneProps[]
+  updateScenes: (scenes: SceneProps[]) => void
+  onDeleteScene: (id: number) => void
+}) => {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0]
+      const imageUrl = URL.createObjectURL(file)
+
+      updateScenes(scenes.map((s) => (s.id === scene.id ? { ...s, image: imageUrl } : s)))
+    }
+  }
+
+  const triggerFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click()
+    }
+  }
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateScenes(scenes.map((s) => (s.id === scene.id ? { ...s, title: e.target.value } : s)))
+  }
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    updateScenes(scenes.map((s) => (s.id === scene.id ? { ...s, description: e.target.value } : s)))
+  }
+
+  const handleDialogueChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    updateScenes(scenes.map((s) => (s.id === scene.id ? { ...s, dialogue: e.target.value } : s)))
+  }
+
   return (
-    <header className="border-b border-gray-800 bg-gray-900 shadow-md w-full">
-      <div className="flex items-center justify-between px-4 py-2">
-        <div className="flex items-center space-x-4">
-          <div>
-            <h1 className="font-medium text-white">{project?.name || 'Proyecto sin nombre'}</h1>
-            <div className="flex items-center text-xs text-gray-400 space-x-2">
-              <span className="flex items-center">
-                <FileText className="h-3 w-3 mr-1" />
-                Storyboard
-              </span>
-              <span className="flex items-center">
-                <Clock className="h-3 w-3 mr-1" />
-                Última edición: {version ? new Date(version.updatedAt).toLocaleDateString() : 'N/A'}
-              </span>
-            </div>
+    <div className="relative">
+      {/* Delete button in top-right corner */}
+      {scenes.length > 1 && (
+        <button
+          className="absolute top-2 right-2 z-20 bg-red-900/70 hover:bg-red-800 text-white p-1.5 rounded-full shadow-md"
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            onDeleteScene(scene.id)
+          }}
+          aria-label="Eliminar escena"
+        >
+          <Trash2 size={16} />
+        </button>
+      )}
+
+      {/* Scene Image */}
+      <div
+        className={`relative h-72 ${
+          scene.image
+            ? "bg-gray-800/80"
+            : "bg-gradient-to-br from-gray-800/80 to-gray-900/80"
+        }`}
+        onClick={(e) => {
+          // Only trigger file input if not clicking on the delete button
+          if (!(e.target as HTMLElement).closest("button")) {
+            triggerFileInput()
+          }
+        }}
+      >
+        <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
+
+        {scene.image ? (
+          <Image src={scene.image || ""} alt={scene.title} fill className="object-cover" />
+        ) : (
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
+            <ImageIcon className="h-10 w-10 mb-2" />
+            <p className="text-sm">Haz clic para subir</p>
           </div>
-        </div>
+        )}
 
-        <div className="flex items-center space-x-3">
-          {/* Version Selector */}
-          <div className="relative">
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                setShowVersionsDropdown(!showVersionsDropdown)
-              }}
-              className="flex items-center space-x-2 text-gray-300 text-sm py-1 px-3 rounded-md border border-gray-700 hover:bg-gray-800"
-            >
-              <Clock className="h-4 w-4" />
-              <span>Versión: {version?.name || 'N/A'}</span>
-            </button>
-
-            {/* Use the reusable dropdown component */}
-            <DropdownSelector
-              title="Seleccionar Versión"
-              options={versions.map(v => ({ id: v.id, name: v.name }))}
-              selectedId={versionId}
-              onSelect={(id) => router.push(`/storybuilder/projects/${projectId}/version/${id}`)}
-              onCreateNew={openNewVersionModal}
-              createNewText="Crear nueva versión"
-              open={showVersionsDropdown}
-              onClose={() => setShowVersionsDropdown(false)}
-            />
-          </div>
-          
-          {/* Action buttons */}
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  onClick={saveStoryboard}
-                  disabled={isSaving}
-                  variant="outline"
-                  size="icon"
-                  className="bg-gray-800 border-gray-700 hover:bg-gray-700 text-gray-300 h-9 w-9"
-                >
-                  {isSaving ? (
-                    <div className="h-4 w-4 border-2 border-t-transparent border-white rounded-full animate-spin" />
-                  ) : (
-                    <Save className="h-4 w-4" />
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <p>Guardar</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline" 
-                  size="icon"
-                  className="bg-gray-800 border-gray-700 hover:bg-gray-700 text-gray-300 h-9 w-9"
-                >
-                  <Download className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <p>Exportar</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline" 
-                  size="icon"
-                  className="bg-gray-800 border-gray-700 hover:bg-gray-700 text-gray-300 h-9 w-9"
-                >
-                  <Share2 className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <p>Compartir</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline" 
-                  size="icon"
-                  className="bg-gray-800 border-gray-700 hover:bg-gray-700 text-gray-300 h-9 w-9"
-                >
-                  <Play className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <p>Previsualizar</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          <Button
-            className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
-          >
-            <Video className="mr-2 h-4 w-4" />
-            Convertir a video
-          </Button>
+        {/* Scene number */}
+        <div className="absolute top-2 left-10 bg-white text-black text-xs font-medium px-2 py-1 rounded">
+          {index + 1}
         </div>
       </div>
-    </header>
+
+      {/* Scene Info */}
+      <div className="p-4">
+        {/* Title */}
+        <div className="mb-3">
+          <label className="block text-xs font-medium text-gray-400 mb-1">Título</label>
+          <input
+            type="text"
+            value={scene.title}
+            onChange={handleTitleChange}
+            className="w-full rounded border border-gray-700 bg-gray-800/60 p-2 text-sm text-gray-300 focus:border-purple-500 focus:outline-none focus:ring-0"
+            placeholder="Título de la escena..."
+          />
+        </div>
+
+        {/* Description */}
+        <div className="mb-3">
+          <div className="flex justify-between items-center mb-1">
+            <label className="text-xs font-medium text-gray-400">Descripción</label>
+          </div>
+          <textarea
+            value={scene.description}
+            onChange={handleDescriptionChange}
+            placeholder="Describe lo que sucede en esta escena..."
+            className="w-full min-h-[80px] rounded border border-gray-700 bg-gray-800/60 p-2 text-sm text-gray-300 focus:border-purple-500 focus:outline-none focus:ring-0"
+          />
+        </div>
+
+        {/* Dialogue */}
+        <div className="mb-2">
+          <div className="flex justify-between items-center mb-1">
+            <label className="text-xs font-medium text-gray-400">Diálogo</label>
+          </div>
+          <textarea
+            value={scene.dialogue}
+            onChange={handleDialogueChange}
+            placeholder="Añade diálogos para los personajes..."
+            className="w-full min-h-[80px] rounded border border-gray-700 bg-gray-800/60 p-2 text-sm text-gray-300 focus:border-purple-500 focus:outline-none focus:ring-0"
+          />
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -202,19 +201,42 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
   const [project, setProject] = useState<any>(null)
   const [version, setVersion] = useState<Version | null>(null)
   const [isSaving, setIsSaving] = useState(false)
-  const [saveMessage, setSaveMessage] = useState("")
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const [showVersionsDropdown, setShowVersionsDropdown] = useState(false)
-  const [newVersionName, setNewVersionName] = useState("")
   const [versions, setVersions] = useState<Version[]>([])
   
   // New state for the modal
   const [newVersionModalOpen, setNewVersionModalOpen] = useState(false)
+  
+  // Scene management states
+  const [scenes, setScenes] = useState<SceneProps[]>([])
+  const [activeScene, setActiveScene] = useState<number>(1)
+  const [activeId, setActiveId] = useState<number | null>(null)
+  const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean; sceneId: number | null }>({
+    isOpen: false,
+    sceneId: null,
+  })
 
-  // Add a ref to access StoryBuilder methods
-  const storyBuilderRef = useRef<any>(null);
+  // Set up sensors for drag and drop
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 3,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  )
+
+  // Add a mounted state to handle hydration issues
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Load data using our service
   useEffect(() => {
@@ -246,7 +268,6 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
         }
         
         console.log("Version data loaded:", versionData);
-        console.log("Version scenes:", versionData.scenes);
         
         // Ensure scenes array is initialized
         const versionWithScenes = {
@@ -255,6 +276,24 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
         };
         
         setVersion(versionWithScenes)
+        
+        // Initialize scenes from version data
+        if (versionWithScenes.scenes && versionWithScenes.scenes.length > 0) {
+          setScenes(versionWithScenes.scenes)
+          setActiveScene(versionWithScenes.scenes[0].id)
+        } else {
+          // Create a default scene if none exists
+          const defaultScene = {
+            id: 1,
+            title: "Nueva escena",
+            description: "",
+            dialogue: "",
+            image: null,
+            color: "bg-purple-500",
+          }
+          setScenes([defaultScene])
+          setActiveScene(1)
+        }
 
         // Get all versions for this project
         const projectVersions = storyboardService.getVersions(projectId)
@@ -282,7 +321,8 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
     }
   }, [showVersionsDropdown])
 
-  const createNewVersion = async () => {
+  // Function to create a new version
+  const createNewVersion = async (newVersionName: string) => {
     if (!newVersionName.trim() || !version) return
 
     setIsSaving(true)
@@ -293,14 +333,13 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
         name: newVersionName,
         description: `Nueva versión: ${newVersionName}`,
         thumbnail: "/placeholder.svg?height=150&width=200",
-        scenes: version.scenes || [],
+        scenes: scenes || [],
       })
       
       // Update local state
       setVersions([newVersion, ...versions])
 
       // Reset form and close modal
-      setNewVersionName("")
       setNewVersionModalOpen(false)
       
       // Navigate to the new version
@@ -313,29 +352,17 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
     }
   }
 
+  // Function to save the current storyboard
   const saveStoryboard = () => {
     if (!version || isSaving) return
     
     setIsSaving(true)
     
-    // Get the latest scenes directly from the StoryBuilder component if available
-    let currentScenes = version.scenes;
-    
-    // Check if the ref has a getCurrentScenes method (we'll need to add this to StoryBuilder)
-    if (storyBuilderRef.current && typeof storyBuilderRef.current.getCurrentScenes === 'function') {
-      console.log("Getting latest scenes from StoryBuilder component");
-      currentScenes = storyBuilderRef.current.getCurrentScenes();
-    } else {
-      console.log("StoryBuilder ref not available, using version state scenes");
-    }
-    
-    console.log("Saving storyboard with scenes:", currentScenes);
-
     try {
       // Make sure we're explicitly passing the complete version object with the latest scenes
       const updatedVersion = storyboardService.updateVersion(version.id, {
         ...version,
-        scenes: currentScenes
+        scenes: scenes
       });
       
       console.log("Version updated in localStorage:", updatedVersion);
@@ -369,27 +396,92 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
     }
   }
 
-  // Handle scene updates from the StoryBuilder component
-  const handleScenesUpdate = (updatedScenes: any[]) => {
-    if (version) {
-      console.log("Scene update received from StoryBuilder:", updatedScenes);
-      
-      // Deep clone to ensure we have fresh references
-      const updatedScenesClone = JSON.parse(JSON.stringify(updatedScenes));
-      
-      // Create a new version object with the updated scenes
-      const updatedVersion = {
-        ...version,
-        scenes: updatedScenesClone,
-      };
-      
-      // Update the local state with the new version
-      setVersion(updatedVersion);
-      
-      // Debug: Log the current version state after update
-      console.log("Version state after scene update:", updatedVersion);
+  // Scene management functions
+  const updateScenes = (newScenes: SceneProps[]) => {
+    setScenes(newScenes)
+    console.log("Scenes updated:", newScenes)
+  }
+
+  const handleAddScene = () => {
+    const newId = scenes.length > 0 ? Math.max(...scenes.map((scene) => scene.id)) + 1 : 1
+    const colors = ["bg-purple-500", "bg-indigo-500", "bg-violet-500", "bg-fuchsia-500", "bg-pink-500"]
+    const colorIndex = newId % colors.length
+
+    const newScene: SceneProps = {
+      id: newId,
+      title: `Nueva escena`,
+      description: "",
+      dialogue: "",
+      image: null,
+      color: colors[colorIndex],
+    }
+
+    const updatedScenes = [...scenes, newScene]
+    updateScenes(updatedScenes)
+    setActiveScene(newId)
+  }
+
+  const openDeleteModal = (id: number) => {
+    setConfirmModal({
+      isOpen: true,
+      sceneId: id,
+    })
+  }
+
+  const handleDeleteScene = (id: number) => {
+    const filteredScenes = scenes.filter((scene) => scene.id !== id)
+    updateScenes(filteredScenes)
+
+    if (activeScene === id && filteredScenes.length > 0) {
+      setActiveScene(filteredScenes[0].id)
     }
   }
+
+  // Functions to handle drag and drop
+  const handleDragStart = (event: any) => {
+    setActiveId(event.active.id)
+  }
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    setActiveId(null)
+
+    if (!over || active.id === over.id) {
+      return
+    }
+
+    const updatedScenes = arrayMove(
+      scenes, 
+      scenes.findIndex((item) => item.id === active.id), 
+      scenes.findIndex((item) => item.id === over.id)
+    )
+    updateScenes(updatedScenes)
+  }
+  
+  // Placeholder functions for future features
+  const exportButtonHandler = () => {
+    alert("Exportar: Función por implementar")
+  }
+  
+  const shareButtonHandler = () => {
+    alert("Compartir: Función por implementar")
+  }
+  
+  // Add state for preview modal
+  const [previewModalOpen, setPreviewModalOpen] = useState(false)
+  
+  // Update the preview button handler to open the modal
+  const previewButtonHandler = () => {
+    setPreviewModalOpen(true)
+  }
+  
+  const convertToVideoHandler = () => {
+    alert("Convertir a video: Función por implementar")
+  }
+
+  // Find the active scene for drag overlay
+  const activeScene2 = activeId ? scenes.find((scene) => scene.id === activeId) : null
+  const activeIndex = activeScene2 ? scenes.findIndex((scene) => scene.id === activeScene2.id) : -1
 
   if (isLoading) {
     return (
@@ -419,75 +511,179 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
 
   return (
     <div className="flex flex-col h-full bg-app-bg">
-      {/* Use the TopNavigationBar component */}
-      <TopNavigationBar 
-        project={project}
-        version={version}
-        versions={versions}
-        versionId={versionId}
-        projectId={projectId}
-        isSaving={isSaving}
-        showVersionsDropdown={showVersionsDropdown}
-        setShowVersionsDropdown={setShowVersionsDropdown}
-        openNewVersionModal={() => setNewVersionModalOpen(true)}
-        saveStoryboard={saveStoryboard}
-        router={router}
-      />
+      {/* Top Navigation Bar - Integrated directly into the page */}
+      <header className="border-b border-gray-800 bg-gray-900 shadow-md w-full">
+        <div className="flex items-center justify-between px-4 py-2">
+          <div className="flex items-center space-x-4">
+            <div>
+              <h1 className="font-medium text-white">{project?.name || 'Proyecto sin nombre'}</h1>
+              <div className="flex items-center text-xs text-gray-400 space-x-2">
+                <span className="flex items-center">
+                  <FileText className="h-3 w-3 mr-1" />
+                  Storyboard
+                </span>
+                <span className="flex items-center">
+                  <Clock className="h-3 w-3 mr-1" />
+                  Última edición: {version ? new Date(version.updatedAt).toLocaleDateString() : 'N/A'}
+                </span>
+              </div>
+            </div>
+          </div>
 
-      {/* Main Content Area */}
+          <div className="flex items-center space-x-3">
+            {/* Version Selector */}
+            <div className="relative">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setShowVersionsDropdown(!showVersionsDropdown)
+                }}
+                className="flex items-center space-x-2 text-gray-300 text-sm py-1 px-3 rounded-md border border-gray-700 hover:bg-gray-800"
+              >
+                <Clock className="h-4 w-4" />
+                <span>Versión: {version?.name || 'N/A'}</span>
+              </button>
+
+              {/* Use the reusable dropdown component */}
+              <DropdownSelector
+                title="Seleccionar Versión"
+                options={versions.map(v => ({ id: v.id, name: v.name }))}
+                selectedId={versionId}
+                onSelect={(id) => router.push(`/storybuilder/projects/${projectId}/version/${id}`)}
+                onCreateNew={() => setNewVersionModalOpen(true)}
+                createNewText="Crear nueva versión"
+                open={showVersionsDropdown}
+                onClose={() => setShowVersionsDropdown(false)}
+              />
+            </div>
+            
+            {/* Action buttons */}
+            <ActionButton
+              icon={Save}
+              label="Guardar"
+              onClick={saveStoryboard}
+              isLoading={isSaving}
+            />
+
+            <ActionButton
+              icon={Download}
+              label="Exportar"
+              onClick={exportButtonHandler}
+            />
+
+            <ActionButton
+              icon={Share2}
+              label="Compartir"
+              onClick={shareButtonHandler}
+            />
+
+            <ActionButton
+              icon={Play}
+              label="Previsualizar"
+              onClick={previewButtonHandler}
+            />
+
+            <Button
+              onClick={convertToVideoHandler}
+              className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
+            >
+              <Video className="mr-2 h-4 w-4" />
+              Convertir a video
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content Area - StoryBuilder integrated directly */}
       <div className="flex-1 overflow-auto p-4 bg-app-bg">
-        <StoryBuilder 
-          ref={storyBuilderRef}
-          initialScenes={version.scenes || []} 
-          projectId={projectId} 
-          versionId={versionId} 
-          onScenesUpdate={handleScenesUpdate}
-          key={`storybuilder-${versionId}`} // Add a key to force re-render when version changes
+        {/* Confirmation Modal */}
+        <ConfirmModal
+          isOpen={confirmModal.isOpen}
+          onClose={() => setConfirmModal({ isOpen: false, sceneId: null })}
+          onConfirm={() => {
+            if (confirmModal.sceneId !== null) {
+              handleDeleteScene(confirmModal.sceneId)
+            }
+          }}
+          title="Eliminar escena"
+          message="¿Estás seguro de que deseas eliminar esta escena? Esta acción no se puede deshacer."
         />
+
+        {/* StoryBuilder content */}
+        {mounted && (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+            onDragStart={handleDragStart}
+          >
+            <SortableContext items={scenes.map((scene) => scene.id)} strategy={verticalListSortingStrategy}>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                {scenes.map((scene, index) => (
+                  <div
+                    key={scene.id}
+                    className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg border border-purple-500/20 shadow-glow-sm overflow-hidden"
+                  >
+                    <SceneCard
+                      scene={scene}
+                      index={index}
+                      scenes={scenes}
+                      updateScenes={updateScenes}
+                      onDeleteScene={openDeleteModal}
+                    />
+                  </div>
+                ))}
+
+                {/* Add New Scene Card */}
+                <button
+                  onClick={handleAddScene}
+                  className="bg-gray-900/90 rounded-lg shadow-glow-sm border border-dashed border-purple-500/30 flex items-center justify-center h-64 hover:bg-gray-800/90 hover:border-purple-500/50 transition-colors"
+                >
+                  <div className="flex flex-col items-center text-gray-400">
+                    <Plus className="h-8 w-8 mb-2" />
+                    <span>Añadir Escena</span>
+                  </div>
+                </button>
+              </div>
+
+              {/* Drag Overlay for improved visual feedback */}
+              <DragOverlay>
+                {activeId && activeScene2 && (
+                  <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg border border-purple-500 shadow-glow-md overflow-hidden opacity-80">
+                    <SceneCard
+                      scene={activeScene2}
+                      index={activeIndex}
+                      scenes={scenes}
+                      updateScenes={updateScenes}
+                      onDeleteScene={openDeleteModal}
+                    />
+                  </div>
+                )}
+              </DragOverlay>
+            </SortableContext>
+          </DndContext>
+        )}
       </div>
 
       {/* New Version Creation Modal */}
-      <Dialog open={newVersionModalOpen} onOpenChange={setNewVersionModalOpen}>
-        <DialogContent className="sm:max-w-md bg-gray-900 border-gray-800 text-white">
-          <DialogHeader>
-            <DialogTitle className="text-white">Crear nueva versión</DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <div className="space-y-2">
-              <Label htmlFor="version-name" className="text-gray-300">Nombre de la versión</Label>
-              <Input 
-                id="version-name"
-                value={newVersionName} 
-                onChange={(e) => setNewVersionName(e.target.value)}
-                placeholder="Nueva versión" 
-                maxLength={20}
-                className="bg-gray-800 border-gray-700 focus:border-purple-500 text-white"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                setNewVersionModalOpen(false)
-                setNewVersionName("")
-              }}
-              className="border-gray-700 text-slate-700 hover:bg-slate-700 hover:text-gray-200 hover:border-gray-600"
-            >
-              Cancelar
-            </Button>
-            <Button
-              onClick={createNewVersion}
-              disabled={!newVersionName.trim() || isSaving}
-              className={`${!newVersionName.trim() || isSaving ? 
-                'bg-purple-700/50 cursor-not-allowed' : 
-                'bg-purple-600 hover:bg-purple-700'}`}
-            >
-              {isSaving ? "Creando..." : "Crear"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <EntityNameDialog
+        isOpen={newVersionModalOpen}
+        onOpenChange={setNewVersionModalOpen}
+        onCreateEntity={createNewVersion}
+        isCreating={isSaving}
+        title="Crear nueva versión"
+        entityLabel="Nombre de la versión"
+        placeholder="Nueva versión"
+        createButtonText="Crear"
+        maxLength={20}
+      />
+      
+      {/* Preview Modal */}
+      <PreviewModal 
+        isOpen={previewModalOpen}
+        onOpenChange={setPreviewModalOpen}
+        scenes={scenes}
+      />
     </div>
   )
 }

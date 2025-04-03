@@ -76,6 +76,11 @@ export const storyboardService = {
     
     return updatedProject;
   },
+  
+  // New method to directly update projects array
+  updateProjects: (projects: Project[]): void => {
+    saveToStorage(STORAGE_KEYS.PROJECTS, projects);
+  },
 
   // Version methods
   getVersions: (projectId: string): Version[] => {
