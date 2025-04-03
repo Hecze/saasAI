@@ -9,7 +9,7 @@ import {
   DialogClose
 } from "@/components/ui/dialog"
 import { RefreshCw, ChevronRight, ChevronLeft, X, Repeat, MessageSquare, FileText, Play, Pause } from 'lucide-react'
-import { SceneProps } from "@/app/storybuilder/projects/[projectId]/version/[versionID]/page"
+import { SceneProps } from "@/lib/storyboard-service"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"

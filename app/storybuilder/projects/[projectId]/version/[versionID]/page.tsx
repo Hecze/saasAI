@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { FileText, Save, Clock, Plus, Download, Share2, Play, Video, GripVertical, 
   RefreshCw, MessageSquare, ImageIcon, Trash2, Upload, ArrowRight, Pen, Sparkles } from "lucide-react"
 import { storyboardService } from "@/lib/storyboard-service"
-import type { Version } from "@/lib/api"
+import type { Version, SceneProps } from "@/lib/storyboard-service"
 import { DropdownSelector } from "@/components/story-builder/dropdown-selector"
 import { ActionButton } from "@/components/story-builder/action-button"
 import { EntityNameDialog } from "@/components/story-builder/entity-name-dialog"
@@ -47,15 +47,6 @@ import {
 // Helper function to safely use params
 function useParams<T>(params: T | Promise<T>): T {
   return params instanceof Promise ? use(params) : params;
-}
-
-export interface SceneProps {
-  id: number
-  title: string
-  description: string
-  dialogue: string
-  image: string | null
-  color: string
 }
 
 // Scene Card Component

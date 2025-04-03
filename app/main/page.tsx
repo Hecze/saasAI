@@ -1,7 +1,9 @@
 "use client"
 
+import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import {
   Sparkles,
   ArrowRight,
@@ -22,9 +24,11 @@ import SwitchSelector from "@/components/ui/switch-selector"
 import VideoEditor from "@/components/video-editor/video-editor"
 import StoryBuilder from "@/components/story-builder"
 import BenefitCard from "@/components/ui/benefit-card"
-import { useState, useRef, useEffect } from "react"
+import { storyboardService } from "@/lib/storyboard-service"
 
 export default function Home() {
+  const router = useRouter()
+  
   // State variables
   const [inputValue, setInputValue] = useState("")
   const [inputFocused, setInputFocused] = useState(false)
@@ -35,6 +39,7 @@ export default function Home() {
   const [isPromptMode, setIsPromptMode] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [inputAreaHeight, setInputAreaHeight] = useState("auto")
+  const [isCreating, setIsCreating] = useState(false)
 
   // Refs
   const demoRef = useRef<HTMLDivElement | null>(null)
@@ -53,6 +58,48 @@ export default function Home() {
   }, [isPromptMode])
 
   /**
+   * Creates a new project and redirects to the storyboard editor
+   */
+  const createProjectAndRedirect = (title: string, description: string, imageUrl: string | null) => {
+    setIsCreating(true)
+    
+    try {
+      // Create a new project
+      const newProject = storyboardService.createProject({
+        name: title,
+        description: description,
+        thumbnail: "/placeholder.svg?height=150&width=200",
+      });
+      
+      // Create the initial scene
+      const initialScene = {
+        id: 1,
+        title: title,
+        description: description,
+        dialogue: "",
+        image: imageUrl,
+        color: "bg-purple-500",
+      };
+      
+      // Create first version with the scene
+      const newVersion = storyboardService.createVersion({
+        projectId: newProject.id,
+        name: "Versión inicial",
+        description: "Primera versión del storyboard",
+        thumbnail: "/placeholder.svg?height=150&width=200",
+        scenes: [initialScene],
+      });
+      
+      // Redirect to the storyboard editor
+      router.push(`/storybuilder/projects/${newProject.id}/version/${newVersion.id}`);
+    } catch (err) {
+      console.error("Error creating project:", err);
+      alert("Error al crear el proyecto. Por favor, inténtalo de nuevo.");
+      setIsCreating(false);
+    }
+  };
+
+  /**
    * Handles drag over event for file upload area
    */
   const handleDragOver = (e: React.DragEvent) => {
@@ -68,8 +115,8 @@ export default function Home() {
     setIsDragging(false)
 
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      // Handle the file upload logic here
-      console.log("File dropped:", e.dataTransfer.files[0])
+      const file = e.dataTransfer.files[0]
+      handleFileUpload(file)
     }
   }
 
@@ -78,21 +125,35 @@ export default function Home() {
    */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      // Handle the file upload logic here
-      console.log("File selected:", e.target.files[0])
+      const file = e.target.files[0]
+      handleFileUpload(file)
     }
   }
 
   /**
-   * Handles form submission
+   * Process uploaded file and create project
+   */
+  const handleFileUpload = (file: File) => {
+    const imageUrl = URL.createObjectURL(file);
+    const projectName = "Proyecto desde imagen";
+    const projectDescription = "Proyecto creado a partir de una imagen subida";
+    
+    createProjectAndRedirect(projectName, projectDescription, imageUrl);
+  };
+
+  /**
+   * Handles form submission for text prompt
    */
   const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault()
-    if (demoRef.current) {
-      demoRef.current.scrollIntoView({ behavior: "smooth" })
-    }
+    
+    if (!inputValue.trim()) return;
+    
+    const projectName = "Proyecto desde prompt";
+    const projectDescription = inputValue.trim();
+    
+    createProjectAndRedirect(projectName, projectDescription, null);
   }
-
 
   /**
    * Handles input mode change (prompt vs upload)
@@ -101,45 +162,17 @@ export default function Home() {
     setIsPromptMode(selected)
   }
 
-  /**
-   * Testimonial data
-   */
-  const testimonials = [
-    {
-      name: "Ana Martínez",
-      position: "Directora de Marketing, AgenciaCreativa",
-      text: "Desde que utilizamos StoryToVideo, hemos reducido nuestros costos de producción en un 70% y acelerado nuestro tiempo de entrega. Nuestros clientes están encantados con los resultados y la calidad de los videos.",
-    },
-    {
-      name: "Luis Gómez",
-      position: "Productor Audiovisual, EstudioX",
-      text: "La capacidad de intervenir en cada fase del proceso es lo que hace que esta herramienta sea tan poderosa. Puedo mantener el control creativo mientras la IA hace el trabajo pesado. ¡Una combinación perfecta!",
-    },
-    {
-      name: "María Rodríguez",
-      position: "CEO, StartupTech",
-      text: "Hemos integrado StoryToVideo en nuestro flujo de trabajo para crear contenido educativo. La velocidad con la que podemos producir videos de calidad nos ha permitido escalar nuestro contenido como nunca antes.",
-    },
-    {
-      name: "Carlos Sánchez",
-      position: "Director de Contenido, RetailPro",
-      text: "La flexibilidad para editar cada escena y personalizar los estilos nos ha permitido mantener nuestra identidad de marca en todos nuestros videos promocionales. Una herramienta indispensable.",
-    },
-  ]
 
 
   /**
    * Handles input change for the prompt input
    */
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setInputValue(e.target.value)
   }
 
   return (
     <div className="flex flex-col min-h-screen w-screen bg-app-bg">
-
-
       {/* Hero Section */}
       <section className="relative w-full pt-28 text-white">
         <div className="absolute inset-0 md:bg-hero-gradient z-0"></div>
@@ -167,7 +200,7 @@ export default function Home() {
           </h2>
 
           {/* Input/Upload Switch and Form */}
-            <div className="mx-auto mb-16 max-w-3xl">
+          <div className="mx-auto mb-16 max-w-3xl">
             {/* Using the reusable SwitchSelector component */}
             <SwitchSelector
               option1Label="Subir Storyboard"
@@ -182,77 +215,99 @@ export default function Home() {
             <div className="mt-8">
               {/* Container with fixed height and transition */}
               <div
-              className="md:transition-height md:duration-200 md:ease-in-out overflow-hidden"
-              style={{ height: inputAreaHeight }}
+                className="md:transition-height md:duration-200 md:ease-in-out overflow-hidden"
+                style={{ height: inputAreaHeight }}
               >
                 {isPromptMode ? (
-                <form
-                ref={promptInputRef}
-                onSubmit={handleSubmit}
-                className="rounded-xl bg-gray-900/60 p-2 backdrop-blur-sm border border-app-purple/20 shadow-glow"
-                >
-                <div className="flex flex-col sm:flex-row">
-                  <div className="flex-1 relative">
-                  <Input
-                  className="h-12 flex-1 border-0 bg-transparent text-white placeholder:text-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0"
-                  value={inputValue}
-                  onChange={handleInputChange}
-                  onFocus={() => setInputFocused(true)}
-                  onBlur={() => setInputFocused(false)}
-                  />
-                  <div className="absolute inset-0 flex items-center px-3 pointer-events-none">
-                  <TypewriterEffect isVisible={!inputFocused && !inputValue} />
-                  </div>
-                  </div>
-                  <div className="flex mt-2 sm:mt-0 gap-2">
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="h-12 w-12 border-0 bg-transparent hover:bg-transparent peer"
-                    type="button"
+                  <form
+                    ref={promptInputRef}
+                    onSubmit={handleSubmit}
+                    className="rounded-xl bg-gray-900/60 p-2 backdrop-blur-sm border border-app-purple/20 shadow-glow"
                   >
-                    <Sparkles className="text-gray-400 hover:text-white hover:opacity-100 opacity-60 transition-all duration-200" />
-                  </Button>
+                    <div className="flex flex-col sm:flex-row">
+                      <div className="flex-1 relative">
+                        <Input
+                          className="h-12 flex-1 border-0 bg-transparent text-white placeholder:text-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0"
+                          value={inputValue}
+                          onChange={handleInputChange}
+                          onFocus={() => setInputFocused(true)}
+                          onBlur={() => setInputFocused(false)}
+                          disabled={isCreating}
+                        />
+                        <div className="absolute inset-0 flex items-center px-3 pointer-events-none">
+                          <TypewriterEffect isVisible={!inputFocused && !inputValue} />
+                        </div>
+                      </div>
+                      <div className="flex mt-2 sm:mt-0 gap-2">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-12 w-12 border-0 bg-transparent hover:bg-transparent peer"
+                          type="button"
+                          disabled={isCreating}
+                        >
+                          <Sparkles className="text-gray-400 hover:text-white hover:opacity-100 opacity-60 transition-all duration-200" />
+                        </Button>
 
-                  <Button
-                  type="submit"
-                  size="icon"
-                  className="h-12 w-12 bg-primary-button hover:bg-primary-button-hover text-white border-0 shadow-glow-md"
-                  >
-                  <ArrowRight className="h-5 w-5" />
-                  </Button>
-                  </div>
-                </div>
-                </form>
+                        <Button
+                          type="submit"
+                          size="icon"
+                          className="h-12 w-12 bg-primary-button hover:bg-primary-button-hover text-white border-0 shadow-glow-md"
+                          disabled={!inputValue.trim() || isCreating}
+                        >
+                          {isCreating ? (
+                            <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
+                          ) : (
+                            <ArrowRight className="h-5 w-5" />
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  </form>
                 ) : (
-                <div
-                ref={uploadAreaRef}
-                className={`rounded-xl bg-gray-900/60 p-10 md:py-24 md:backdrop-blur-sm border-2 border-dashed ${
-                  isDragging ? "border-app-purple bg-gray-900/80" : "border-gray-600"
-                } transition-colors duration-200 shadow-glow text-center`}
-                onDragOver={handleDragOver}
-                onDragLeave={() => setIsDragging(false)}
-                onDrop={handleDrop}
-                onClick={() => fileInputRef.current?.click()}
-                >
-                <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
-                <div className="flex flex-col items-center justify-center gap-4">
-                  <div className="h-16 w-16 rounded-full bg-gray-800/80 flex items-center justify-center">
-                  <Upload className="h-7 w-7 text-purple-400" />
+                  <div
+                    ref={uploadAreaRef}
+                    className={`rounded-xl bg-gray-900/60 p-10 md:py-24 md:backdrop-blur-sm border-2 border-dashed ${
+                      isDragging ? "border-app-purple bg-gray-900/80" : "border-gray-600"
+                    } transition-colors duration-200 shadow-glow text-center`}
+                    onDragOver={handleDragOver}
+                    onDragLeave={() => setIsDragging(false)}
+                    onDrop={handleDrop}
+                    onClick={() => !isCreating && fileInputRef.current?.click()}
+                  >
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      className="hidden" 
+                      accept="image/*" 
+                      onChange={handleFileChange} 
+                      disabled={isCreating}
+                    />
+                    <div className="flex flex-col items-center justify-center gap-4">
+                      <div className="h-16 w-16 rounded-full bg-gray-800/80 flex items-center justify-center">
+                        {isCreating ? (
+                          <div className="animate-spin h-7 w-7 border-2 border-purple-400 border-t-transparent rounded-full" />
+                        ) : (
+                          <Upload className="h-7 w-7 text-purple-400" />
+                        )}
+                      </div>
+                      <div className="my-2">
+                        <p className="text-white font-medium text-lg">
+                          {isCreating ? "Creando proyecto..." : "Arrastra y suelta tu storyboard"}
+                        </p>
+                        {!isCreating && (
+                          <p className="text-gray-400 text-sm mt-2">o haz clic para seleccionar un archivo</p>
+                        )}
+                      </div>
+                      {!isCreating && (
+                        <p className="text-xs text-gray-500 mt-2">Formatos soportados: JPG, PNG, PDF</p>
+                      )}
+                    </div>
                   </div>
-                  <div className="my-2">
-                  <p className="text-white font-medium text-lg">Arrastra y suelta tu storyboard</p>
-                  <p className="text-gray-400 text-sm mt-2">o haz clic para seleccionar un archivo</p>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-2">Formatos soportados: JPG, PNG, PDF</p>
-                </div>
-                </div>
                 )}
               </div>
             </div>
-            </div>
-
-
+          </div>
         </div>
       </section>
 
@@ -625,8 +680,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-
     </div>
   )
 }

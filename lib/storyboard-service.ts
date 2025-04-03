@@ -1,4 +1,34 @@
-import type { Version, Project } from './api';
+
+// Define types for our API responses
+export interface Project {
+  id: string
+  name: string
+  description: string
+  createdAt: string
+  updatedAt: string
+  thumbnail: string
+  versionCount: number
+}
+
+export interface Version {
+  id: string
+  projectId: string
+  name: string
+  description: string
+  createdAt: string
+  updatedAt: string
+  thumbnail: string
+  scenes: SceneProps[]
+}
+
+export interface SceneProps {
+  id: number
+  title: string
+  description: string
+  dialogue: string
+  image: string | null
+  color: string
+}
 
 // Type definitions for local storage keys
 const STORAGE_KEYS = {

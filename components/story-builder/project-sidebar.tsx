@@ -15,7 +15,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Plus, Folder, Shell, Pencil, X } from "lucide-react"
 import { storyboardService } from "@/lib/storyboard-service"
-import type { Project } from "@/lib/api"
+import type { Project } from "@/lib/storyboard-service"
 import Link from "next/link"
 import { EntityNameDialog } from "@/components/story-builder/entity-name-dialog"
 import { ConfirmModal } from "@/components/ui/confirm-modal"
