@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { X } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 
 interface EntityNameDialogProps {
   isOpen: boolean
@@ -38,22 +38,35 @@ export function EntityNameDialog({
   maxLength = 30
 }: EntityNameDialogProps) {
   const [entityName, setEntityName] = useState("")
+  const inputRef = useRef<HTMLInputElement>(null)
   
-  // Initialize with initialValue when dialog opens
+  // Initialize with initialValue when dialog opens and focus the input
   useEffect(() => {
     if (isOpen) {
       setEntityName(initialValue)
+      // Set a small timeout to ensure the input is in the DOM
+      setTimeout(() => {
+        inputRef.current?.focus()
+      }, 50)
     }
   }, [isOpen, initialValue])
   
   const handleCreateEntity = () => {
-    onCreateEntity(entityName)
-    setEntityName("")
+    if (entityName.trim()) {
+      onCreateEntity(entityName)
+      setEntityName("")
+    }
   }
   
   const handleCancel = () => {
     onOpenChange(false)
     setEntityName("")
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !isCreating && entityName.trim()) {
+      handleCreateEntity()
+    }
   }
 
   return (
@@ -71,8 +84,10 @@ export function EntityNameDialog({
             <Label htmlFor="entity-name" className="text-gray-300">{entityLabel}</Label>
             <Input 
               id="entity-name"
+              ref={inputRef}
               value={entityName} 
               onChange={(e) => setEntityName(e.target.value)}
+              onKeyDown={handleKeyDown}
               placeholder={placeholder} 
               maxLength={maxLength}
               autoComplete="off" // Disable browser autocomplete

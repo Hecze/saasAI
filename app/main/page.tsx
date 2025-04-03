@@ -127,29 +127,6 @@ export default function Home() {
     },
   ]
 
-  /**
-   * Changes the displayed testimonials
-   */
-  type TestimonialDirection = "right" | "left";
-
-  /**
-   * Changes the displayed testimonials
-   */
-  const changeTestimonial = (direction: TestimonialDirection): void => {
-    setIsSliding(true)
-    setSlideDirection(direction)
-
-    setTimeout(() => {
-      if (direction === "right") {
-        setCurrentTestimonial((prev) => (prev + 2 >= testimonials.length ? 0 : prev + 2))
-      } else {
-        setCurrentTestimonial((prev) =>
-          prev - 2 < 0 ? testimonials.length - (testimonials.length % 2 === 0 ? 2 : 1) : prev - 2,
-        )
-      }
-      setIsSliding(false)
-    }, 300)
-  }
 
   /**
    * Handles input change for the prompt input

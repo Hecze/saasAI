@@ -4,7 +4,9 @@ import { useState, useEffect, use, useRef } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { FileText, Save, Clock, Plus, Download, Share2, Play, Video, GripVertical, RefreshCw, MessageSquare, ImageIcon, Trash2 } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { FileText, Save, Clock, Plus, Download, Share2, Play, Video, GripVertical, 
+  RefreshCw, MessageSquare, ImageIcon, Trash2, Upload, ArrowRight, Pen, Sparkles } from "lucide-react"
 import { storyboardService } from "@/lib/storyboard-service"
 import type { Version } from "@/lib/api"
 import { DropdownSelector } from "@/components/story-builder/dropdown-selector"
@@ -12,6 +14,8 @@ import { ActionButton } from "@/components/story-builder/action-button"
 import { EntityNameDialog } from "@/components/story-builder/entity-name-dialog"
 import { ConfirmModal } from "@/components/ui/confirm-modal"
 import { PreviewModal } from "@/components/story-builder/preview-modal"
+import SwitchSelector from "@/components/ui/switch-selector"
+import TypewriterEffect from "@/components/typewriter-effect"
 import {
   TooltipProvider,
 } from "@/components/ui/tooltip"
@@ -99,20 +103,18 @@ const SceneCard = ({
 
   return (
     <div className="relative">
-      {/* Delete button in top-right corner */}
-      {scenes.length > 1 && (
-        <button
-          className="absolute top-2 right-2 z-20 bg-red-900/70 hover:bg-red-800 text-white p-1.5 rounded-full shadow-md"
-          onClick={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            onDeleteScene(scene.id)
-          }}
-          aria-label="Eliminar escena"
-        >
-          <Trash2 size={16} />
-        </button>
-      )}
+      {/* Delete button in top-right corner - Remove condition that checks scenes.length > 1 */}
+      <button
+        className="absolute top-2 right-2 z-20 bg-red-900/70 hover:bg-red-800 text-white p-1.5 rounded-full shadow-md"
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          onDeleteScene(scene.id)
+        }}
+        aria-label="Eliminar escena"
+      >
+        <Trash2 size={16} />
+      </button>
 
       {/* Scene Image */}
       <div
@@ -219,6 +221,16 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
     sceneId: null,
   })
 
+  // New states for the initial form
+  const [isPromptMode, setIsPromptMode] = useState(true)
+  const [inputValue, setInputValue] = useState("")
+  const [isDragging, setIsDragging] = useState(false)
+  const [inputFocused, setInputFocused] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const promptInputRef = useRef<HTMLFormElement>(null)
+  const uploadAreaRef = useRef<HTMLDivElement>(null)
+  const [inputAreaHeight, setInputAreaHeight] = useState('auto')
+
   // Set up sensors for drag and drop
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -237,6 +249,83 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  // Adjust height for input area based on mode
+  useEffect(() => {
+    if (uploadAreaRef.current && !isPromptMode) {
+      // Increase height for upload area to prevent clipping
+      setInputAreaHeight('350px');
+    } else if (promptInputRef.current && isPromptMode) {
+      setInputAreaHeight('80px');
+    }
+  }, [isPromptMode]);
+
+  // Input/Upload handlers
+  const handleInputModeChange = (selected: boolean) => {
+    setIsPromptMode(selected);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      createSceneFromUpload(file);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      createSceneFromUpload(file);
+    }
+  };
+
+  const createSceneFromUpload = (file: File) => {
+    const imageUrl = URL.createObjectURL(file);
+    
+    // Create first scene with the uploaded image
+    const newScene: SceneProps = {
+      id: 1,
+      title: "Escena importada",
+      description: "Descripción de la escena importada",
+      dialogue: "",
+      image: imageUrl,
+      color: "bg-purple-500",
+    };
+    
+    setScenes([newScene]);
+    setActiveScene(1);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputValue.trim()) return;
+    
+    // Create first scene with the prompt text as description
+    const newScene: SceneProps = {
+      id: 1,
+      title: "Nueva escena",
+      description: inputValue,
+      dialogue: "",
+      image: null,
+      color: "bg-purple-500",
+    };
+    
+    setScenes([newScene]);
+    setActiveScene(1);
+    setInputValue("");
+  };
 
   // Load data using our service
   useEffect(() => {
@@ -281,19 +370,8 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
         if (versionWithScenes.scenes && versionWithScenes.scenes.length > 0) {
           setScenes(versionWithScenes.scenes)
           setActiveScene(versionWithScenes.scenes[0].id)
-        } else {
-          // Create a default scene if none exists
-          const defaultScene = {
-            id: 1,
-            title: "Nueva escena",
-            description: "",
-            dialogue: "",
-            image: null,
-            color: "bg-purple-500",
-          }
-          setScenes([defaultScene])
-          setActiveScene(1)
         }
+        // We no longer create a default scene here, instead we'll show the upload/prompt form
 
         // Get all versions for this project
         const projectVersions = storyboardService.getVersions(projectId)
@@ -430,10 +508,16 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
 
   const handleDeleteScene = (id: number) => {
     const filteredScenes = scenes.filter((scene) => scene.id !== id)
-    updateScenes(filteredScenes)
-
-    if (activeScene === id && filteredScenes.length > 0) {
-      setActiveScene(filteredScenes[0].id)
+    
+    if (filteredScenes.length === 0) {
+      // If we're deleting the last scene, clear scenes completely
+      updateScenes([])
+    } else {
+      updateScenes(filteredScenes)
+      
+      if (activeScene === id && filteredScenes.length > 0) {
+        setActiveScene(filteredScenes[0].id)
+      }
     }
   }
 
@@ -609,59 +693,151 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
           message="¿Estás seguro de que deseas eliminar esta escena? Esta acción no se puede deshacer."
         />
 
-        {/* StoryBuilder content */}
-        {mounted && (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-            onDragStart={handleDragStart}
-          >
-            <SortableContext items={scenes.map((scene) => scene.id)} strategy={verticalListSortingStrategy}>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                {scenes.map((scene, index) => (
-                  <div
-                    key={scene.id}
-                    className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg border border-purple-500/20 shadow-glow-sm overflow-hidden"
+        {/* Show Input form if no scenes exist, otherwise show the scenes */}
+        {scenes.length === 0 ? (
+          // Input/Upload Switch and Form - Position at fixed height from top
+          <div className="flex flex-col h-full pt-28 pb-16 max-w-3xl mx-auto">
+            {/* Using the reusable SwitchSelector component - fixed width to prevent movement */}
+            <div className="w-full max-w-md mx-auto">
+              <SwitchSelector
+                option1Label="Subir Storyboard"
+                option2Label="Escribir Prompt"
+                option1Icon={<Upload className="h-5 w-5" />}
+                option2Icon={<Pen className="h-5 w-5" />}
+                defaultSelected={isPromptMode}
+                onChange={handleInputModeChange}
+              />
+            </div>
+
+            {/* Added margin-top to create more separation */}
+            <div className="mt-8 w-full">
+              {/* Container with fixed height and transition */}
+              <div
+                className="md:transition-height md:duration-200 md:ease-in-out overflow-hidden w-full"
+                style={{ height: inputAreaHeight }}
+              >
+                {isPromptMode ? (
+                  <form
+                    ref={promptInputRef}
+                    onSubmit={handleSubmit}
+                    className="rounded-xl bg-gray-900/60 p-2 backdrop-blur-sm border border-app-purple/20 shadow-glow w-full"
                   >
-                    <SceneCard
-                      scene={scene}
-                      index={index}
-                      scenes={scenes}
-                      updateScenes={updateScenes}
-                      onDeleteScene={openDeleteModal}
-                    />
-                  </div>
-                ))}
+                    <div className="flex flex-col sm:flex-row">
+                      <div className="flex-1 relative">
+                        <Input
+                          className="h-12 flex-1 border-0 bg-transparent text-white placeholder:text-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0"
+                          value={inputValue}
+                          onChange={handleInputChange}
+                          onFocus={() => setInputFocused(true)}
+                          onBlur={() => setInputFocused(false)}
+                        />
+                        <div className="absolute inset-0 flex items-center px-3 pointer-events-none">
+                          <TypewriterEffect isVisible={!inputFocused && !inputValue} />
+                        </div>
+                      </div>
+                      <div className="flex mt-2 sm:mt-0 gap-2">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-12 w-12 border-0 bg-transparent hover:bg-transparent peer"
+                          type="button"
+                        >
+                          <Sparkles className="text-gray-400 hover:text-white hover:opacity-100 opacity-60 transition-all duration-200" />
+                        </Button>
 
-                {/* Add New Scene Card */}
-                <button
-                  onClick={handleAddScene}
-                  className="bg-gray-900/90 rounded-lg shadow-glow-sm border border-dashed border-purple-500/30 flex items-center justify-center h-64 hover:bg-gray-800/90 hover:border-purple-500/50 transition-colors"
-                >
-                  <div className="flex flex-col items-center text-gray-400">
-                    <Plus className="h-8 w-8 mb-2" />
-                    <span>Añadir Escena</span>
-                  </div>
-                </button>
-              </div>
-
-              {/* Drag Overlay for improved visual feedback */}
-              <DragOverlay>
-                {activeId && activeScene2 && (
-                  <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg border border-purple-500 shadow-glow-md overflow-hidden opacity-80">
-                    <SceneCard
-                      scene={activeScene2}
-                      index={activeIndex}
-                      scenes={scenes}
-                      updateScenes={updateScenes}
-                      onDeleteScene={openDeleteModal}
-                    />
+                        <Button
+                          type="submit"
+                          size="icon"
+                          className="h-12 w-12 bg-primary-button hover:bg-primary-button-hover text-white border-0 shadow-glow-md"
+                          disabled={!inputValue.trim()}
+                        >
+                          <ArrowRight className="h-5 w-5" />
+                        </Button>
+                      </div>
+                    </div>
+                  </form>
+                ) : (
+                  <div
+                    ref={uploadAreaRef}
+                    className={`rounded-xl bg-gray-900/60 p-6 md:py-16 md:backdrop-blur-sm border-2 border-dashed ${
+                      isDragging ? "border-app-purple bg-gray-900/80" : "border-gray-600"
+                    } transition-colors duration-200 shadow-glow text-center w-full h-full min-h-[300px]`}
+                    onDragOver={handleDragOver}
+                    onDragLeave={() => setIsDragging(false)}
+                    onDrop={handleDrop}
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
+                    <div className="flex flex-col items-center justify-center gap-4 h-full">
+                      <div className="h-16 w-16 rounded-full bg-gray-800/80 flex items-center justify-center">
+                        <Upload className="h-7 w-7 text-purple-400" />
+                      </div>
+                      <div className="my-2">
+                        <p className="text-white font-medium text-lg">Arrastra y suelta tu storyboard</p>
+                        <p className="text-gray-400 text-sm mt-2">o haz clic para seleccionar un archivo</p>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">Formatos soportados: JPG, PNG, PDF</p>
+                    </div>
                   </div>
                 )}
-              </DragOverlay>
-            </SortableContext>
-          </DndContext>
+              </div>
+            </div>
+          </div>
+        ) : (
+          // StoryBuilder content
+          mounted && (
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+              onDragStart={handleDragStart}
+            >
+              <SortableContext items={scenes.map((scene) => scene.id)} strategy={verticalListSortingStrategy}>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                  {scenes.map((scene, index) => (
+                    <div
+                      key={scene.id}
+                      className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg border border-purple-500/20 shadow-glow-sm overflow-hidden"
+                    >
+                      <SceneCard
+                        scene={scene}
+                        index={index}
+                        scenes={scenes}
+                        updateScenes={updateScenes}
+                        onDeleteScene={openDeleteModal}
+                      />
+                    </div>
+                  ))}
+
+                  {/* Add New Scene Card */}
+                  <button
+                    onClick={handleAddScene}
+                    className="bg-gray-900/90 rounded-lg shadow-glow-sm border border-dashed border-purple-500/30 flex items-center justify-center h-64 hover:bg-gray-800/90 hover:border-purple-500/50 transition-colors"
+                  >
+                    <div className="flex flex-col items-center text-gray-400">
+                      <Plus className="h-8 w-8 mb-2" />
+                      <span>Añadir Escena</span>
+                    </div>
+                  </button>
+                </div>
+
+                {/* Drag Overlay for improved visual feedback */}
+                <DragOverlay>
+                  {activeId && activeScene2 && (
+                    <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg border border-purple-500 shadow-glow-md overflow-hidden opacity-80">
+                      <SceneCard
+                        scene={activeScene2}
+                        index={activeIndex}
+                        scenes={scenes}
+                        updateScenes={updateScenes}
+                        onDeleteScene={openDeleteModal}
+                      />
+                    </div>
+                  )}
+                </DragOverlay>
+              </SortableContext>
+            </DndContext>
+          )
         )}
       </div>
 
