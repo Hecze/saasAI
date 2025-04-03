@@ -16,6 +16,8 @@ import { ConfirmModal } from "@/components/ui/confirm-modal"
 import { PreviewModal } from "@/components/story-builder/preview-modal"
 import SwitchSelector from "@/components/ui/switch-selector"
 import TypewriterEffect from "@/components/typewriter-effect"
+import { ComicPanelExtractor } from "@/components/story-builder/comic-panel-extractor"
+import { ComicPanelAdjustmentModal } from "@/components/story-builder/comic-panel-adjustment-modal"
 import {
   TooltipProvider,
 } from "@/components/ui/tooltip"
@@ -271,34 +273,86 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
     
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
-      createSceneFromUpload(file);
+      handleImageUpload(file);
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      createSceneFromUpload(file);
+      handleImageUpload(file);
     }
   };
 
-  const createSceneFromUpload = (file: File) => {
+  // New function to handle image uploads and open the adjustment modal
+  const handleImageUpload = (file: File) => {
     const imageUrl = URL.createObjectURL(file);
-    
-    // Create first scene with the uploaded image
-    const newScene: SceneProps = {
-      id: 1,
-      title: "Escena importada",
-      description: "Descripción de la escena importada",
-      dialogue: "",
-      image: imageUrl,
-      color: "bg-purple-500",
-    };
-    
-    setScenes([newScene]);
-    setActiveScene(1);
+    setCurrentImageUrl(imageUrl);
+    setAdjustmentModalOpen(true);
   };
 
+  // Function to handle confirmed panels
+  const handlePanelsConfirmed = (extractedScenes: SceneProps[]) => {
+    if (extractedScenes.length > 0) {
+      // If we already have scenes, we might want to append or replace
+      // For simplicity, we'll replace existing scenes if they're empty
+      // or append if there are already scenes
+      if (scenes.length === 0) {
+        setScenes(extractedScenes);
+      } else {
+        // Append the new scenes, making sure IDs don't conflict
+        const maxId = Math.max(...scenes.map(scene => scene.id));
+        const newScenes = extractedScenes.map((scene, index) => ({
+          ...scene,
+          id: maxId + index + 1
+        }));
+        setScenes([...scenes, ...newScenes]);
+      }
+      
+      // Set active scene to the first extracted scene if we didn't have scenes before
+      if (scenes.length === 0) {
+        setActiveScene(extractedScenes[0].id);
+      }
+      
+      toast({
+        title: "Procesamiento completado",
+        description: `Se han extraído ${extractedScenes.length} paneles.`,
+        duration: 3000,
+      });
+    } else {
+      toast({
+        title: "Error al procesar paneles",
+        description: "No se pudieron extraer los paneles. Inténtalo de nuevo.",
+        variant: "destructive",
+        duration: 5000,
+      });
+    }
+    
+    // Clean up URL object to prevent memory leaks
+    if (currentImageUrl) {
+      URL.revokeObjectURL(currentImageUrl);
+      setCurrentImageUrl(null);
+    }
+  };
+
+  // Handle modal close properly
+  const handleModalClose = (open: boolean) => {
+    setAdjustmentModalOpen(open);
+    if (!open) {
+      // Clean up URL object when modal is closed
+      if (currentImageUrl) {
+        URL.revokeObjectURL(currentImageUrl);
+        setCurrentImageUrl(null);
+      }
+    }
+  };
+
+  // Replace the existing createSceneFromUpload function with our new workflow
+  const createSceneFromUpload = async (file: File) => {
+    handleImageUpload(file);
+  };
+
+  // Add this missing function to handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
@@ -389,6 +443,21 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
       return () => document.removeEventListener("click", handleClickOutside)
     }
   }, [showVersionsDropdown])
+
+  // Add this near the other useEffect hooks
+  useEffect(() => {
+    // Check if there's a temporary image URL from the main page
+    const tempImageUrl = localStorage.getItem('tempImageUrl');
+    
+    if (tempImageUrl && mounted) {
+      // Set the current image URL and open the adjustment modal
+      setCurrentImageUrl(tempImageUrl);
+      setAdjustmentModalOpen(true);
+      
+      // Clear the temporary image URL from localStorage
+      localStorage.removeItem('tempImageUrl');
+    }
+  }, [mounted]); // Only run this effect once when component is mounted
 
   // Function to create a new version
   const createNewVersion = async (newVersionName: string) => {
@@ -553,6 +622,10 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
   const convertToVideoHandler = () => {
     alert("Convertir a video: Función por implementar")
   }
+
+  // Add state for the panel adjustment modal
+  const [adjustmentModalOpen, setAdjustmentModalOpen] = useState(false)
+  const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(null)
 
   // Find the active scene for drag overlay
   const activeScene2 = activeId ? scenes.find((scene) => scene.id === activeId) : null
@@ -851,6 +924,16 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
         onOpenChange={setPreviewModalOpen}
         scenes={scenes}
       />
+
+      {/* Panel Adjustment Modal */}
+      {currentImageUrl && (
+        <ComicPanelAdjustmentModal
+          isOpen={adjustmentModalOpen}
+          onOpenChange={handleModalClose}
+          imageUrl={currentImageUrl}
+          onConfirm={handlePanelsConfirmed}
+        />
+      )}
     </div>
   )
 }

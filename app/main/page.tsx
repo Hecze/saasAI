@@ -134,11 +134,38 @@ export default function Home() {
    * Process uploaded file and create project
    */
   const handleFileUpload = (file: File) => {
-    const imageUrl = URL.createObjectURL(file);
-    const projectName = "Proyecto desde imagen";
-    const projectDescription = "Proyecto creado a partir de una imagen subida";
+    setIsCreating(true);
     
-    createProjectAndRedirect(projectName, projectDescription, imageUrl);
+    try {
+      const imageUrl = URL.createObjectURL(file);
+      const projectName = "Proyecto desde imagen";
+      
+      // Create a new project without initial scenes
+      const newProject = storyboardService.createProject({
+        name: projectName,
+        description: "Proyecto creado a partir de una imagen subida",
+        thumbnail: "/placeholder.svg?height=150&width=200",
+      });
+      
+      // Create first version without scenes
+      const newVersion = storyboardService.createVersion({
+        projectId: newProject.id,
+        name: "Versión inicial",
+        description: "Primera versión del storyboard",
+        thumbnail: "/placeholder.svg?height=150&width=200",
+        scenes: [], // Empty scenes array
+      });
+      
+      // Store the temporary image URL in localStorage to be picked up by the storybuilder page
+      localStorage.setItem('tempImageUrl', imageUrl);
+      
+      // Redirect to the storyboard editor
+      router.push(`/storybuilder/projects/${newProject.id}/version/${newVersion.id}`);
+    } catch (err) {
+      console.error("Error creating project:", err);
+      alert("Error al crear el proyecto. Por favor, inténtalo de nuevo.");
+      setIsCreating(false);
+    }
   };
 
   /**
