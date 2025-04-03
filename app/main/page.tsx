@@ -295,7 +295,7 @@ export default function Home() {
                   <div
                     ref={uploadAreaRef}
                     className={`rounded-xl bg-gray-900/60 p-10 md:py-24 md:backdrop-blur-sm border-2 border-dashed ${
-                      isDragging ? "border-app-purple bg-gray-900/80" : "border-gray-600"
+                      isDragging ? "border-app-indigo bg-gray-900/80" : "border-gray-600"
                     } transition-colors duration-200 shadow-glow text-center`}
                     onDragOver={handleDragOver}
                     onDragLeave={() => setIsDragging(false)}

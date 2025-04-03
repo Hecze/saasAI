@@ -5,12 +5,13 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogClose
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { SceneProps } from '@/lib/storyboard-service';
 import { PanelBoundaryEditor } from './panel-boundary-editor';
 import { ComicPanelExtractor } from './comic-panel-extractor';
-import { Trash2, Plus } from "lucide-react";
+import { Trash2, Plus, X } from "lucide-react";
 
 export interface Panel {
   id: number;
@@ -180,9 +181,17 @@ export const ComicPanelAdjustmentModal: React.FC<ComicPanelAdjustmentModalProps>
         onOpenChange(open);
       }}
     >
-      <DialogContent className="sm:max-w-4xl max-h-[90vh] flex flex-col bg-slate-100">
-        <DialogHeader>
-          <DialogTitle>Ajustar paneles del cómic</DialogTitle>
+      <DialogContent 
+        className="sm:max-w-4xl max-h-[90vh] flex flex-col bg-slate-100"
+        onPointerDownOutside={(e) => e.preventDefault()} // Prevent closing on outside click
+      >
+        <DialogHeader className="relative">
+        <DialogTitle className="text-lg font-medium text-slate-800 opacity-90">
+            Previsualización del storyboard
+          </DialogTitle>
+          <DialogClose className="absolute top-[-.6rem] right-0 h-8 w-8 rounded-full flex items-center justify-center bg-black/40 hover:bg-black/60 text-white transition-colors border border-purple-500/30 shadow-glow-sm">
+            <X className="h-4 w-4" />
+          </DialogClose>
         </DialogHeader>
         
         <div className="flex-1 overflow-auto py-4">

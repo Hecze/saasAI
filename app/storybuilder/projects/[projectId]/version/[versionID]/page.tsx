@@ -44,11 +44,73 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
+  useSortable,
+  rectSortingStrategy,
 } from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 
 // Helper function to safely use params
 function useParams<T>(params: T | Promise<T>): T {
   return params instanceof Promise ? use(params) : params;
+}
+
+// SortableSceneCard component for drag and drop
+const SortableSceneCard = ({
+  scene,
+  index,
+  scenes,
+  updateScenes,
+  onDeleteScene,
+}: {
+  scene: SceneProps
+  index: number
+  scenes: SceneProps[]
+  updateScenes: (scenes: SceneProps[]) => void
+  onDeleteScene: (id: number) => void
+}) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: scene.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.6 : 1,
+    zIndex: isDragging ? 9999 : 1,
+
+  }
+
+  return (
+    <div 
+      ref={setNodeRef} 
+      style={style} 
+      className={`bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg border ${
+        isDragging ? 'border-purple-500 shadow-glow-lg' : 'border-purple-500/20 shadow-glow-sm'
+      } overflow-hidden transition-all`}
+    >
+      {/* Drag handle */}
+      <div 
+        {...attributes} 
+        {...listeners} 
+        className="bg-gray-800 p-2 cursor-grab active:cursor-grabbing flex items-center justify-center border-b border-gray-700"
+      >
+        <GripVertical className="h-5 w-5 text-gray-400" />
+      </div>
+      
+      <SceneCard
+        scene={scene}
+        index={index}
+        scenes={scenes}
+        updateScenes={updateScenes}
+        onDeleteScene={onDeleteScene}
+      />
+    </div>
+  )
 }
 
 // Scene Card Component
@@ -113,13 +175,13 @@ const SceneCard = ({
       <div
         className={`relative h-72 ${
           scene.image
-            ? "bg-gray-800/80"
-            : "bg-gradient-to-br from-gray-800/80 to-gray-900/80"
+        ? "bg-gray-800/80"
+        : "bg-gradient-to-br from-gray-800/80 to-gray-900/80"
         }`}
         onClick={(e) => {
           // Only trigger file input if not clicking on the delete button
           if (!(e.target as HTMLElement).closest("button")) {
-            triggerFileInput()
+        triggerFileInput()
           }
         }}
       >
@@ -129,13 +191,13 @@ const SceneCard = ({
           <Image src={scene.image || ""} alt={scene.title} fill className="object-cover" />
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
-            <ImageIcon className="h-10 w-10 mb-2" />
-            <p className="text-sm">Haz clic para subir</p>
+        <ImageIcon className="h-10 w-10 mb-2" />
+        <p className="text-sm">Haz clic para subir</p>
           </div>
         )}
 
-        {/* Scene number */}
-        <div className="absolute top-2 left-10 bg-white text-black text-xs font-medium px-2 py-1 rounded">
+        {/* Scene number - centered both vertically and horizontally */}
+        <div className="absolute top-2 left-2 bg-white text-black text-xs font-medium size-6 rounded border border-gray-200 shadow-sm flex items-center justify-center">
           {index + 1}
         </div>
       </div>
@@ -228,12 +290,12 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 3,
+        distance: 5, // Slightly increase the activation distance for better control
       },
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    }),
+    })
   )
 
   // Add a mounted state to handle hydration issues
@@ -584,21 +646,24 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
   // Functions to handle drag and drop
   const handleDragStart = (event: any) => {
     setActiveId(event.active.id)
+    // Add a class to body to indicate dragging is in progress
+    document.body.classList.add('dragging-scene')
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
     setActiveId(null)
+    // Remove dragging class from body
+    document.body.classList.remove('dragging-scene')
 
     if (!over || active.id === over.id) {
       return
     }
 
-    const updatedScenes = arrayMove(
-      scenes, 
-      scenes.findIndex((item) => item.id === active.id), 
-      scenes.findIndex((item) => item.id === over.id)
-    )
+    const oldIndex = scenes.findIndex((item) => item.id === active.id)
+    const newIndex = scenes.findIndex((item) => item.id === over.id)
+    
+    const updatedScenes = arrayMove(scenes, oldIndex, newIndex)
     updateScenes(updatedScenes)
   }
   
@@ -856,21 +921,20 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
               onDragEnd={handleDragEnd}
               onDragStart={handleDragStart}
             >
-              <SortableContext items={scenes.map((scene) => scene.id)} strategy={verticalListSortingStrategy}>
+              <SortableContext 
+                items={scenes.map((scene) => scene.id)} 
+                strategy={rectSortingStrategy}
+              >
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                   {scenes.map((scene, index) => (
-                    <div
+                    <SortableSceneCard
                       key={scene.id}
-                      className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg border border-purple-500/20 shadow-glow-sm overflow-hidden"
-                    >
-                      <SceneCard
-                        scene={scene}
-                        index={index}
-                        scenes={scenes}
-                        updateScenes={updateScenes}
-                        onDeleteScene={openDeleteModal}
-                      />
-                    </div>
+                      scene={scene}
+                      index={index}
+                      scenes={scenes}
+                      updateScenes={updateScenes}
+                      onDeleteScene={openDeleteModal}
+                    />
                   ))}
 
                   {/* Add New Scene Card */}
@@ -886,9 +950,15 @@ export default function StoryboardEditor({ params }: { params: { projectId: stri
                 </div>
 
                 {/* Drag Overlay for improved visual feedback */}
-                <DragOverlay>
+                <DragOverlay adjustScale={true} dropAnimation={{
+                  duration: 300,
+                  easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+                }}>
                   {activeId && activeScene2 && (
-                    <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg border border-purple-500 shadow-glow-md overflow-hidden opacity-80">
+                    <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg border border-purple-600/20 shadow-glow-sm overflow-hidden transform scale-105">
+                      <div className="bg-slate-600 p-2 flex items-center justify-center border-b border-gray-700">
+                        <GripVertical className="h-5 w-5 text-white" />
+                      </div>
                       <SceneCard
                         scene={activeScene2}
                         index={activeIndex}
